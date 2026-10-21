@@ -43,6 +43,7 @@ export function useRecorder(): Recorder {
   const startedAt = useRef(0);
   const stopResolve = useRef<((b: Blob | null) => void) | null>(null);
   const keep = useRef(true);
+  const mounted = useRef(true);
 
   const cleanup = useCallback(() => {
     if (raf.current !== null) cancelAnimationFrame(raf.current);
@@ -53,7 +54,18 @@ export function useRecorder(): Recorder {
     ctx.current = null;
   }, []);
 
-  useEffect(() => () => cleanup(), [cleanup]);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      const rec = media.current;
+      if (rec && rec.state !== 'inactive') {
+        keep.current = false;
+        rec.stop();
+      }
+      cleanup();
+    };
+  }, [cleanup]);
   useEffect(() => () => {
     if (url) URL.revokeObjectURL(url);
   }, [url]);
@@ -66,6 +78,11 @@ export function useRecorder(): Recorder {
     setStatus('requesting');
     try {
       const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // The screen closed while the permission prompt was open: release the mic at once.
+      if (!mounted.current) {
+        s.getTracks().forEach((t) => t.stop());
+        return;
+      }
       stream.current = s;
       const rec = new MediaRecorder(s);
       media.current = rec;
@@ -98,7 +115,7 @@ export function useRecorder(): Recorder {
         const rms = Math.sqrt(sum / data.length);
         if (t - lastPush > 100) {
           lastPush = t;
-          setLevels((prev) => [...prev.slice(-(MAX_LEVELS - 1)), Math.min(1, rms * 4)]);
+          setLevels((prev) => [...prev.slice(-(MAX_LEVELS - 1)), Math.min(1, rms * 6)]);
           setElapsed(Math.floor((performance.now() - startedAt.current) / 1000));
         }
         raf.current = requestAnimationFrame(tick);

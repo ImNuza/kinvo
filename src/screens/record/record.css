@@ -34,7 +34,7 @@
   background: var(--primary);
   color: var(--primary-foreground);
   /* Pale ring: the primary colour at about a quarter strength, as in the frame. */
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 27%, var(--background));
+  box-shadow: 0 0 0 4px var(--primary-ring);
   transition: transform 120ms ease;
 }
 .rec-start__button:active {
