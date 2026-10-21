@@ -1,0 +1,145 @@
+/* Screens 09, 09a, 09b. Tokens only. */
+
+.meanings__textlink {
+  color: var(--primary);
+  font: var(--text-subtitle);
+}
+.meanings__textlink:hover {
+  text-decoration: underline;
+}
+
+/* 09 Add meaning */
+.add-meaning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.add-meaning__clip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+}
+.add-meaning__reply {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.add-meaning__recorded {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+}
+.add-meaning .add-meaning__quiet {
+  align-self: flex-start;
+  color: var(--muted-foreground);
+}
+/* Figma: the Meaning box is 72 px high. */
+.add-meaning textarea.k-field__box {
+  min-height: 72px;
+}
+.add-meaning__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* 09a and 09b */
+.meanings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.meanings__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+.meanings__term {
+  font: var(--text-term);
+}
+.meanings__term:focus {
+  outline: none;
+}
+.meanings__term:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.meanings__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.meanings__add {
+  align-self: flex-start;
+}
+.meanings__thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.meanings__replies {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.meanings__agreement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+.meanings .meanings__change {
+  color: var(--muted-foreground);
+}
+
+/* Composer in the Screen footer slot */
+.composer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.composer__input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap-min);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--input);
+  border-radius: var(--radius-full);
+  background: var(--card);
+  font: var(--text-description);
+}
+.composer__input::placeholder {
+  color: var(--muted-foreground);
+}
+.composer__send {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--shadow-button);
+}
+.composer__send:hover {
+  opacity: 0.92;
+}
+.composer__error {
+  position: absolute;
+  bottom: calc(100% + var(--space-1));
+  left: var(--space-4);
+}
