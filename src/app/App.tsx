@@ -1,4 +1,5 @@
-import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-router';
+import { useEffect } from 'react';
+import { createBrowserRouter, Navigate, Outlet, RouterProvider, useLocation } from 'react-router';
 import { NavBar, Screen } from '../components/index.ts';
 import { archiveRoutes } from '../screens/archive/routes.tsx';
 import { familyRoutes } from '../screens/family/routes.tsx';
@@ -8,7 +9,32 @@ import { recordRoutes } from '../screens/record/routes.tsx';
 import { DemoPanel } from './DemoPanel.tsx';
 import { paths } from './paths.ts';
 
+// Tab title per route, so screen readers and browser tabs name the screen.
+const TITLES: [RegExp, string][] = [
+  [/^\/archive/, 'Archive'],
+  [/^\/record\/recording/, 'Recording'],
+  [/^\/record\/save\//, 'Save this take'],
+  [/^\/record\/saved\//, 'Saved'],
+  [/^\/record/, 'Record'],
+  [/^\/family\/send\//, 'Send story'],
+  [/^\/family\/reply\//, 'Reply'],
+  [/^\/family/, 'Family'],
+  [/^\/stories\/[^/]+\/meaning\/new/, 'Add meaning'],
+  [/^\/stories\/[^/]+\/meanings/, 'Meanings'],
+  [/^\/lessons\/[^/]+\/practise/, 'Practise'],
+  [/^\/lessons/, 'Lessons'],
+];
+
+function usePageTitle() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const match = TITLES.find(([re]) => re.test(pathname));
+    document.title = match ? `${match[1]} | Kinvo` : 'Kinvo';
+  }, [pathname]);
+}
+
 function AppLayout() {
+  usePageTitle();
   return (
     <div id="app-frame" className="app-frame">
       <Outlet />

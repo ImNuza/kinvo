@@ -76,12 +76,16 @@ a {
 
 @media (min-width: 600px) {
   body {
-    display: grid;
-    place-items: center;
     background: var(--desktop-backdrop);
   }
 
+  #root {
+    display: grid;
+    place-items: center;
+  }
+
   .app-frame {
+    width: var(--screen-width);
     height: min(var(--screen-height), calc(100dvh - 32px));
     border-radius: 28px;
     box-shadow: var(--shadow-alert);

@@ -83,7 +83,10 @@ export function FamilyScreen() {
     .sort((a, b) => Date.parse(a.addedAt) - Date.parse(b.addedAt));
   const members: Person[] = ahMa ? [ahMa, ...others] : others;
 
-  const latestStory = newestFirst(state.stories.filter((s) => s.status === 'saved'))[0];
+  // A member tap sends the newest saved story that already has a meaning (the one the family is
+  // discussing), else the newest saved story.
+  const saved = newestFirst(state.stories.filter((s) => s.status === 'saved'));
+  const latestStory = saved.find((s) => state.meanings.some((m) => m.storyId === s.id)) ?? saved[0];
   const banners = [...requestBanners(state, persona), ...replyBanners(state, persona)];
 
   // After a new member is added, the sheet closes and focus goes to that member.

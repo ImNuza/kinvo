@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { paths } from '../../app/paths.ts';
 import { Button, ButtonLink, Icon, MeaningCard, NavBar, Pill, Screen, ThreadReply } from '../../components/index.ts';
 import { useAppState, useDispatch } from '../../data/react.tsx';
@@ -75,13 +75,13 @@ export function MeaningsScreen() {
     return (
       <Screen
         nav={<NavBar trail={[{ label: 'Archive', to: paths.archive() }]} current="Meanings" />}
-        hideTabBar
+        tab="family"
       >
         <div className="stack gap-3">
           <p className="t-subtitle">Story not found</p>
-          <Link to={paths.family()} className="meanings__textlink">
+          <ButtonLink to={paths.family()} variant="outline" size="md">
             Go to Family
-          </Link>
+          </ButtonLink>
         </div>
       </Screen>
     );
