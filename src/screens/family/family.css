@@ -1,0 +1,171 @@
+/* Family screens (06, 06a, 06b, 07, 08). Values come from tokens.css only. */
+
+/* 06 Family members */
+.k-screen__body.fam-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.fam-footer {
+  margin-bottom: calc(var(--space-1) * -1);
+}
+
+.fam-banners {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.fam-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+}
+.fam-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.fam-card {
+  position: relative;
+  margin-bottom: var(--space-1);
+  flex: 1;
+  min-height: 380px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+}
+.fam-hill {
+  position: absolute;
+  inset: auto 0 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.fam-member {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  width: 116px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: center;
+  /* The top value is the centre of the avatar. */
+  transform: translate(-50%, -28px);
+}
+.fam-member > .k-avatar {
+  margin-bottom: 1px;
+}
+.fam-member--button {
+  border-radius: var(--radius-xl);
+}
+
+/* 06a Add family member */
+.fam-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-bottom: var(--space-6);
+}
+.fam-sheet__preview {
+  display: flex;
+  margin-top: -2px;
+  justify-content: center;
+}
+.fam-sheet__contacts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.fam-sheet__contacts p:empty {
+  display: none;
+}
+
+/* 07 Send story */
+.k-screen__body.send-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.send-section {
+  gap: var(--space-2);
+}
+.send-section--first {
+  gap: var(--space-3);
+}
+.send-story {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: calc(var(--space-4) - 2px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+}
+.send-story__title {
+  font: var(--text-title);
+}
+.send-people {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.send-person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  text-align: left;
+}
+.send-person--on {
+  border-color: var(--primary);
+  background: var(--primary-tint);
+}
+.send-person__text {
+  min-width: 0;
+}
+.fam-missing {
+  align-items: flex-start;
+  padding-top: var(--space-4);
+}
+
+/* 08 Reply */
+.k-screen__body.reply-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-top: var(--space-8);
+}
+.reply-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+.reply-hero > h2 {
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+.reply-hero > .k-pill {
+  margin-top: var(--space-1);
+}
+.reply-actions {
+  width: 100%;
+}
