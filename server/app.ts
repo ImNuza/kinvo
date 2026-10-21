@@ -42,10 +42,17 @@ const ROUTES: Readonly<Record<string, Method>> = {
 
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
 
-/** The first X-Forwarded-For value when the peer is the local proxy, else the socket address. */
+/**
+ * Client id for the rate limit. When the peer is the local proxy: Cf-Connecting-IP (set by the
+ * Cloudflare tunnel, because Caddy only sees cloudflared on localhost), else the first
+ * X-Forwarded-For value. Otherwise the socket address.
+ */
 export function clientOf(req: IncomingMessage): string {
   const peer = req.socket.remoteAddress ?? 'unknown';
   if (!LOOPBACK.has(peer)) return peer;
+  const cf = req.headers['cf-connecting-ip'];
+  const cfFirst = (Array.isArray(cf) ? cf[0] : cf)?.trim().slice(0, 64);
+  if (cfFirst) return cfFirst;
   const header = req.headers['x-forwarded-for'];
   const raw = Array.isArray(header) ? header[0] : header;
   const first = raw?.split(',')[0]?.trim().slice(0, 64);
