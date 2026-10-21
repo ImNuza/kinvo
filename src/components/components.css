@@ -440,7 +440,7 @@
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: var(--space-3) var(--space-4);
+  padding: 6px var(--space-4) var(--space-3);
 }
 .k-sheet__head > :last-child { justify-self: end; }
 .k-sheet__title { font: var(--text-title); }

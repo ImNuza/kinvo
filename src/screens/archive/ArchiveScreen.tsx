@@ -6,6 +6,7 @@ import { AH_MA_CLIP_URL, useClipUrl, usePlayer } from '../../lib/audio.ts';
 import { usePersona } from '../../lib/session.ts';
 import { paths } from '../../app/paths.ts';
 import {
+  formatDay,
   DEMO_TODAY,
   addDays,
   calendarDays,
@@ -17,7 +18,6 @@ import {
   type CalendarDay,
   type Story,
 } from '../../shared/index.ts';
-import { shortDay } from '../lessons/dates.ts';
 import './archive.css';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -72,7 +72,7 @@ function StoryRow({ state, story }: { state: AppState; story: Story }) {
     <li className="arch-story">
       <div className="arch-story__text">
         <p className="t-muted">
-          {shortDay(story.date)} · {story.place}
+          {formatDay(story.date)} · {story.place}
         </p>
         <Link to={storyLink(state, story)} className="arch-story__title t-subtitle">
           {story.title}
@@ -213,7 +213,7 @@ export function ArchiveScreen() {
           ) : (
             <div className="arch-story">
               <div className="arch-story__text">
-                <p className="t-muted">{shortDay(selected)}</p>
+                <p className="t-muted">{formatDay(selected)}</p>
                 <p className="t-muted">
                   {selectedDay ? 'A recording from this day. Details are not in this demo.' : 'No recording on this day.'}
                 </p>

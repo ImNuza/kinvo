@@ -2,8 +2,7 @@ import { Link } from 'react-router';
 import { ButtonLink, NavBar, Pill, Screen } from '../../components/index.ts';
 import { useAppState } from '../../data/react.tsx';
 import { paths } from '../../app/paths.ts';
-import { lessons, type Lesson } from '../../shared/index.ts';
-import { shortDay } from './dates.ts';
+import { formatDay, lessons, type Lesson } from '../../shared/index.ts';
 import './lessons.css';
 
 /** "Sunday lunch" -> "lunch" */
@@ -21,7 +20,7 @@ function sourceLine(lesson: Lesson): string {
 
 function LessonCard({ lesson }: { lesson: Lesson }) {
   const source = sourceLine(lesson);
-  const from = `from ${shortDay(lesson.storyDate)} ${occasionWord(lesson.occasion)}`.trim();
+  const from = `from ${formatDay(lesson.storyDate)} ${occasionWord(lesson.occasion)}`.trim();
   const differ = lesson.pill === 'differ';
   return (
     <li className="k-card lesson">

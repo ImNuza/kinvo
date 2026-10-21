@@ -18,12 +18,13 @@ export function formatDuration(totalSec: number): string {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
-/** "2026-09-13" -> "Sun 13 Sep" */
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** "2026-09-13" -> "Sun 13 Sep". Fixed names: some locales print "Sept". */
 export function formatDay(date: string): string {
   const d = new Date(`${date}T12:00:00Z`);
-  const wd = d.toLocaleDateString('en-GB', { weekday: 'short', timeZone: 'UTC' });
-  const mon = d.toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' });
-  return `${wd} ${d.getUTCDate()} ${mon}`;
+  return `${WEEKDAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
 }
 
 /** "2026-09" -> "September 2026" */

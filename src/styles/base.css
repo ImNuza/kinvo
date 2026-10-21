@@ -70,6 +70,7 @@ a {
   height: 100dvh;
   margin: 0 auto;
   overflow: hidden;
+  overflow: clip;
   background: var(--background);
 }
 
