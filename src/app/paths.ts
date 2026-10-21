@@ -17,4 +17,6 @@ export const paths = {
 
   lessons: () => '/lessons',
   practise: (storyId: string) => `/lessons/${storyId}/practise`,
+
+  study: () => '/study',
 } as const;

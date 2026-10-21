@@ -8,6 +8,7 @@ import { meaningRoutes } from '../screens/meanings/routes.tsx';
 import { recordRoutes } from '../screens/record/routes.tsx';
 import { DemoPanel } from './DemoPanel.tsx';
 import { paths } from './paths.ts';
+import { StudyRedirect } from './StudyRedirect.tsx';
 
 // Tab title per route, so screen readers and browser tabs name the screen.
 const TITLES: [RegExp, string][] = [
@@ -23,6 +24,7 @@ const TITLES: [RegExp, string][] = [
   [/^\/stories\/[^/]+\/meanings/, 'Meanings'],
   [/^\/lessons\/[^/]+\/practise/, 'Practise'],
   [/^\/lessons/, 'Lessons'],
+  [/^\/study/, 'Study'],
 ];
 
 function usePageTitle() {
@@ -66,6 +68,7 @@ const router = createBrowserRouter([
       ...familyRoutes,
       ...meaningRoutes,
       ...lessonRoutes,
+      { path: paths.study(), element: <StudyRedirect /> },
       { path: '*', element: <NotFound /> },
     ],
   },
