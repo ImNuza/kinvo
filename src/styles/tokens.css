@@ -1,0 +1,73 @@
+/*
+ * Kinvo design tokens, from Figma file M9MZSMGCHLtquAtmpgSOYH, page "Iteration 2".
+ * This is the ONLY file that holds raw colours, font names and sizes.
+ * Every other stylesheet uses these variables, so the team can restyle the app here.
+ */
+
+:root {
+  /* Colour */
+  --background: #f6efe5;
+  --foreground: #2b201a;
+  --card: #fffcf7;
+  --primary: #275e6b;
+  --primary-foreground: #fffcf7;
+  --primary-tint: #e5e9e6;
+  --secondary: #eee3d3;
+  --muted: #eee3d3;
+  --muted-foreground: #6b5848;
+  --clay: #d1a982;
+  --clay-tint: #ead7c2;
+  --heritage: #8a5a32;
+  --border: #e2d4bf;
+  --input: #94806a;
+  --destructive: #a8352b;
+  --destructive-tint: #f1dcd6;
+  --success: #4d7a33;
+  --success-text: #435f2c;
+  --success-tint: #e3e7d8;
+  --warning: #a8720f;
+  --warning-text: #765113;
+  --warning-border: #b98e3d;
+  --rec-tint: #f5e4df;
+  --text-out: #aea297;
+  --scrim: rgb(43 32 26 / 0.32);
+  --shadow-button: 0 1px 2px rgb(43 32 26 / 0.08);
+  --shadow-sheet: 0 -8px 24px rgb(43 32 26 / 0.12);
+  --shadow-alert: 0 12px 32px rgb(43 32 26 / 0.18);
+  --desktop-backdrop: #e9dfd1;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-full: 9999px;
+
+  /* Type */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-heading: 700 24px/32px var(--font-sans);
+  --text-title: 600 18px/26px var(--font-sans);
+  --text-subtitle: 600 14px/20px var(--font-sans);
+  --text-description: 400 14px/20px var(--font-sans);
+  --text-display: 800 52px/60px var(--font-sans);
+  --text-month: 700 24px/32px var(--font-sans);
+  --text-term: 700 24px/32px var(--font-sans);
+
+  /* Layout */
+  --screen-width: 390px;
+  --screen-height: 844px;
+  --gutter: 20px;
+  --navbar-height: 56px;
+  --tabbar-height: 82px;
+  --tap-min: 44px;
+}

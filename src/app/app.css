@@ -1,0 +1,29 @@
+/* App shell: demo trigger. */
+
+.demo-trigger {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 40;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  opacity: 0.5;
+}
+.demo-trigger:hover,
+.demo-trigger:focus-visible {
+  opacity: 1;
+}
+/* Bigger hit area than the dot itself. */
+.demo-trigger::after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+}
+
+.demo-panel {
+  padding-bottom: var(--space-4);
+}

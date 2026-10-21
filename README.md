@@ -11,3 +11,12 @@ Every push to `main` goes live at https://kinvo.nuza.dev within about a minute.
 - With no `package.json`, the repo root is published as static files.
 - Frontend only for now. Ask Dewa before you add a backend.
 - Work on a branch and merge to `main` only when it builds locally (`npm run build`).
+
+## Develop
+
+```
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. Read `docs/CONTRACT.md` before you change code. Demo controls: Shift+D or `?demo=1`.
