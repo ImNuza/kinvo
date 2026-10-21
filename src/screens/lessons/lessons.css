@@ -1,0 +1,130 @@
+/* 12 Lessons and 13 Practise. Tokens only. */
+
+.lessons-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0 var(--space-4);
+}
+
+.lessons-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+/* .k-card.x: base.css loads after this file and also sets .k-card padding. */
+.k-card.lesson {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 19px var(--space-5) 13px;
+}
+.lesson__text {
+  display: flex;
+  flex-direction: column;
+}
+.lesson__text > .t-title {
+  margin-top: 7px;
+}
+.lesson__text > .t-title + p {
+  margin-top: 8px;
+}
+.lesson__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.lesson__link {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--primary);
+}
+.lesson__link:hover {
+  text-decoration: underline;
+}
+
+.lessons-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+/* 13 Practise */
+.prac {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.k-card.prac-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+.prac-card__row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.prac-score {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.prac-score .prac-tip {
+  margin-top: 2px;
+}
+.prac-score__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.prac-score__value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: var(--text-subtitle);
+}
+.prac-score__check {
+  display: inline-flex;
+  color: var(--success);
+}
+.prac-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--secondary);
+}
+.prac-bar__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  transition: width 240ms ease-out;
+}
+.prac-tip {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--muted);
+}
+.prac-note {
+  font: var(--text-description);
+}
+.prac-error {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--destructive);
+  border-radius: var(--radius-md);
+  background: var(--destructive-tint);
+  color: var(--destructive);
+}
+.prac-missing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}

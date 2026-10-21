@@ -1,0 +1,169 @@
+/* 01 Archive. Tokens only. */
+
+/* Extra class: base.css loads after this file and also sets .k-card padding. */
+.k-card.arch-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.arch-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) 0;
+}
+.arch-month {
+  font: var(--text-month);
+}
+.arch-head .t-italic {
+  margin-top: -6px;
+}
+.arch-nav {
+  display: flex;
+  gap: var(--space-1);
+}
+.arch-nav__btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--foreground);
+}
+.arch-nav__btn:hover {
+  background: var(--secondary);
+}
+
+.arch-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 5px;
+  padding: 0 var(--space-3);
+}
+.arch-grid--names {
+  margin-top: 20px;
+  padding-bottom: 9px;
+}
+.arch-weekday {
+  text-align: center;
+  font: var(--text-description);
+}
+
+.arch-day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 0 auto;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--foreground);
+  font: var(--text-description);
+}
+.arch-day--out {
+  color: var(--text-out);
+}
+.arch-day--meaning {
+  background: var(--clay-tint);
+}
+.arch-day--recording {
+  border: 1px dashed var(--input);
+}
+.arch-day--today {
+  border: 1px solid var(--foreground);
+  box-shadow: 0 0 0 1px var(--foreground);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.arch-day--selected:not(.arch-day--today) {
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+button.arch-day:hover:not(.arch-day--today) {
+  background: var(--clay-tint);
+}
+
+.arch-dot {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: var(--radius-full);
+  background: var(--heritage);
+}
+.arch-day:not(.arch-day--meaning):not(.arch-day--today) .arch-dot {
+  display: none;
+}
+.arch-day--today .arch-dot {
+  background: var(--primary-foreground);
+}
+
+.arch-detail {
+  margin-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.arch-stories {
+  display: flex;
+  flex-direction: column;
+}
+.arch-story {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 15px var(--space-4);
+}
+.arch-stories .arch-story + .arch-story {
+  border-top: 1px solid var(--border);
+}
+.arch-story__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.arch-story__title:hover {
+  text-decoration: underline;
+}
+
+.arch-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-4) 0 0;
+  color: var(--muted-foreground);
+}
+.arch-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.arch-key {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+}
+.arch-key--meaning {
+  background: var(--clay-tint);
+}
+.arch-key--meaning .arch-dot {
+  bottom: auto;
+  top: 50%;
+  margin-top: -2px;
+}
+.arch-key--recording {
+  border: 1px dashed var(--input);
+}
+.arch-key--today {
+  background: var(--primary);
+}
