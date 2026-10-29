@@ -17,7 +17,7 @@
   <a id="open" href="#">Open the study</a>
 </main>
 <script>
-  // Iter2.05 A/B entry link. /go and /go/assign are the only Kinvo paths outside the login gate (Caddy on zanux),
+  // Iter2.05 A/B entry link. /go, /go/assign, /go/results and /go/counts are the only Kinvo paths outside the login gate (Caddy on zanux),
   // so this page must stay self-contained. Keep the links in step with src/app/StudyRedirect.tsx.
   // A new visitor gets the version the server has given out less often (POST /go/assign), so A and B stay
   // within one of each other. If the server does not answer in 3 s, the pick is random.

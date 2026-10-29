@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kinvo study results</title>
+<style>
+  body { margin: 0; padding: 32px 20px; font: 16px/1.5 system-ui, -apple-system, sans-serif; color: #1f2a2e; background: #f6efe4; }
+  main { max-width: 420px; margin: 0 auto; }
+  h1 { margin: 0 0 8px; font-size: 22px; }
+  .muted { color: #5f6b6e; }
+  .cards { display: flex; gap: 12px; margin: 20px 0 12px; }
+  .card { flex: 1; padding: 16px; border: 1px solid #e3d8c6; border-radius: 16px; background: #fffaf2; }
+  .label { font-weight: 600; }
+  .num { display: block; margin: 4px 0; font-size: 44px; font-weight: 700; line-height: 1.1; }
+  a { color: #1f5c66; }
+  button { width: 100%; margin-top: 16px; padding: 12px; border: 1px solid #1f5c66; border-radius: 12px; font: inherit; color: #1f5c66; background: transparent; }
+  .error { color: #a33a2c; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Study results</h1>
+  <p class="muted">People sent to each version by kinvo.nuza.dev/go. Pilot links with ?v=a or ?v=b are not counted.</p>
+  <div class="cards">
+    <div class="card"><span class="label">A: stacked</span><span class="num" id="a">-</span><a href="https://app.maze.co/projects/603496314/mazes/603496315/results" target="_blank" rel="noreferrer">Maze results A</a></div>
+    <div class="card"><span class="label">B: side by side</span><span class="num" id="b">-</span><a href="https://app.maze.co/projects/603496314/mazes/603503575/results" target="_blank" rel="noreferrer">Maze results B</a></div>
+  </div>
+  <p id="summary"></p>
+  <p class="muted">Completed responses can be lower than these numbers. Check them in Maze.</p>
+  <button id="refresh" type="button">Refresh</button>
+</main>
+<script>
+  // Iter2.05 A/B counts. Public like /go, so it stays self-contained: it reads GET /go/counts only.
+  var summary = document.getElementById('summary');
+
+  function show(c) {
+    document.getElementById('a').textContent = c.a;
+    document.getElementById('b').textContent = c.b;
+    var last = c.lastAt
+      ? ' Last visitor ' + new Date(c.lastAt).toLocaleString('en-SG', { timeZone: 'Asia/Singapore', dateStyle: 'medium', timeStyle: 'short' }) + '.'
+      : ' No visitors yet.';
+    summary.className = '';
+    summary.textContent = 'Total ' + c.total + '. Difference ' + Math.abs(c.a - c.b) + '.' + last;
+  }
+
+  function load() {
+    fetch('/go/counts', { cache: 'no-store' })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (c) {
+        if (!c || typeof c.a !== 'number' || typeof c.b !== 'number') throw new Error('bad counts');
+        show(c);
+      })
+      .catch(function () {
+        summary.className = 'error';
+        summary.textContent = 'Could not load the counts. Try again.';
+      });
+  }
+
+  document.getElementById('refresh').addEventListener('click', load);
+  load();
+</script>
+</body>
+</html>

@@ -51,7 +51,7 @@ which `public/go.html` (`/go`) calls.
 
 ### GET /api/study/counts
 
-`200 { "a": <number>, "b": <number>, "total": <number>, "lastAt": <ISO string | null> }`. Read by the gated `/go/results` page.
+`200 { "a": <number>, "b": <number>, "total": <number>, "lastAt": <ISO string | null> }`. Caddy exposes it outside the login gate as `GET https://kinvo.nuza.dev/go/counts`, which `public/go-results.html` (`/go/results`) reads.
 The `study_assignments` table is separate from `state`, so the nightly reset does not clear it.
 
 ### Anything else under /api
