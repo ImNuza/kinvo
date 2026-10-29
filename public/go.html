@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kinvo study</title>
+<style>
+  body { margin: 0; padding: 32px 20px; font: 16px/1.5 system-ui, -apple-system, sans-serif; color: #1f2a2e; background: #f6efe4; }
+  main { max-width: 420px; margin: 0 auto; }
+  a { display: block; margin-top: 16px; padding: 14px; border-radius: 12px; text-align: center; color: #fff; background: #1f5c66; text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <p>Opening the study...</p>
+  <a id="open" href="#">Open the study</a>
+</main>
+<script>
+  // Iter2.05 A/B entry link. This page is the only Kinvo path outside the login gate (Caddy on zanux),
+  // so it must stay self-contained. Keep the links in step with src/app/StudyRedirect.tsx.
+  // ?v=a or ?v=b forces a version for testing and is not remembered. Otherwise the first pick sticks to this browser.
+  var LINKS = { a: 'https://t.maze.co/603496315', b: 'https://t.maze.co/603503575' };
+  var KEY = 'kinvo.study.v1';
+  var forced = new URLSearchParams(location.search).get('v');
+  var version = forced === 'a' || forced === 'b' ? forced : null;
+  if (!version) {
+    try {
+      var saved = localStorage.getItem(KEY);
+      if (saved === 'a' || saved === 'b') version = saved;
+    } catch (e) {}
+  }
+  if (!version) {
+    version = Math.random() < 0.5 ? 'a' : 'b';
+    try { localStorage.setItem(KEY, version); } catch (e) {}
+  }
+  document.getElementById('open').href = LINKS[version];
+  location.replace(LINKS[version]);
+</script>
+</body>
+</html>
