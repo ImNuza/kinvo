@@ -19,4 +19,5 @@ export const paths = {
   practise: (storyId: string) => `/lessons/${storyId}/practise`,
 
   study: () => '/study',
+  studyResults: () => '/go/results',
 } as const;

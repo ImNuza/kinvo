@@ -17,6 +17,8 @@ export type AppOptions = {
   dbPath: string;
   /** Clock in epoch milliseconds. Tests pass a fake one. */
   now?: () => number;
+  /** Breaks a tie in the study assignment. Tests pass a fixed one. */
+  random?: () => number;
   /** POST requests allowed per client in each window. */
   rateLimit?: { max?: number; windowMs?: number };
   /** Reset to the seed at 04:00 Asia/Singapore. Default true. */
@@ -38,6 +40,8 @@ const ROUTES: Readonly<Record<string, Method>> = {
   '/api/state': 'GET',
   '/api/actions': 'POST',
   '/api/reset': 'POST',
+  '/api/study/assign': 'POST',
+  '/api/study/counts': 'GET',
 };
 
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
@@ -131,7 +135,7 @@ export function createApp(options: AppOptions): App {
       process.stderr.write(`kinvo: request failed: ${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`);
     });
 
-  const db = openDb({ path: options.dbPath, now });
+  const db = openDb({ path: options.dbPath, now, random: options.random });
   const limiter = createRateLimiter({
     max: options.rateLimit?.max ?? DEFAULT_RATE_LIMIT.max,
     windowMs: options.rateLimit?.windowMs ?? DEFAULT_RATE_LIMIT.windowMs,
@@ -154,7 +158,10 @@ export function createApp(options: AppOptions): App {
 
     if (method === 'GET') {
       if (path === '/api/health') send(res, 200, { ok: true, version: db.snapshot().version });
-      else send(res, 200, db.snapshot());
+      else if (path === '/api/study/counts') {
+        const counts = db.studyCounts();
+        send(res, 200, { ...counts, total: counts.a + counts.b });
+      } else send(res, 200, db.snapshot());
       return;
     }
 
@@ -170,6 +177,12 @@ export function createApp(options: AppOptions): App {
       res.once('finish', () => {
         setTimeout(() => req.socket.destroy(), 1000).unref();
       });
+      return;
+    }
+
+    if (path === '/api/study/assign') {
+      // The body is not used. The page sends an empty one.
+      send(res, 200, { version: db.assignStudy() });
       return;
     }
 

@@ -17,25 +17,48 @@
   <a id="open" href="#">Open the study</a>
 </main>
 <script>
-  // Iter2.05 A/B entry link. This page is the only Kinvo path outside the login gate (Caddy on zanux),
-  // so it must stay self-contained. Keep the links in step with src/app/StudyRedirect.tsx.
-  // ?v=a or ?v=b forces a version for testing and is not remembered. Otherwise the first pick sticks to this browser.
+  // Iter2.05 A/B entry link. /go and /go/assign are the only Kinvo paths outside the login gate (Caddy on zanux),
+  // so this page must stay self-contained. Keep the links in step with src/app/StudyRedirect.tsx.
+  // A new visitor gets the version the server has given out less often (POST /go/assign), so A and B stay
+  // within one of each other. If the server does not answer in 3 s, the pick is random.
+  // ?v=a or ?v=b forces a version for pilots and tests. It is not counted and not remembered.
+  // Otherwise the first version sticks to this browser and is counted once.
   var LINKS = { a: 'https://t.maze.co/603496315', b: 'https://t.maze.co/603503575' };
   var KEY = 'kinvo.study.v1';
-  var forced = new URLSearchParams(location.search).get('v');
-  var version = forced === 'a' || forced === 'b' ? forced : null;
-  if (!version) {
-    try {
-      var saved = localStorage.getItem(KEY);
-      if (saved === 'a' || saved === 'b') version = saved;
-    } catch (e) {}
+
+  function isVersion(v) { return v === 'a' || v === 'b'; }
+
+  function go(version) {
+    document.getElementById('open').href = LINKS[version];
+    location.replace(LINKS[version]);
   }
-  if (!version) {
-    version = Math.random() < 0.5 ? 'a' : 'b';
+
+  function remember(version) {
     try { localStorage.setItem(KEY, version); } catch (e) {}
+    go(version);
   }
-  document.getElementById('open').href = LINKS[version];
-  location.replace(LINKS[version]);
+
+  var forced = new URLSearchParams(location.search).get('v');
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+
+  if (isVersion(forced)) {
+    go(forced);
+  } else if (isVersion(saved)) {
+    go(saved);
+  } else {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 3000);
+    fetch('/go/assign', { method: 'POST', cache: 'no-store', signal: ctrl.signal })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (body) {
+        clearTimeout(timer);
+        remember(body && isVersion(body.version) ? body.version : Math.random() < 0.5 ? 'a' : 'b');
+      })
+      .catch(function () {
+        remember(Math.random() < 0.5 ? 'a' : 'b');
+      });
+  }
 </script>
 </body>
 </html>

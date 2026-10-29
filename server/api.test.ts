@@ -453,3 +453,74 @@ describe('nightly reset', () => {
     assert.equal(app.db.snapshot().state.replies.length, 0);
   });
 });
+
+describe('study assignment (Iter2.05 A/B)', () => {
+  type Counts = { a: number; b: number; total: number; lastAt: string | null };
+
+  async function assign(url: string): Promise<string> {
+    const res = await fetch(`${url}/api/study/assign`, { method: 'POST' });
+    assert.equal(res.status, 200);
+    assertJsonHeaders(res);
+    return ((await json(res)) as { version: string }).version;
+  }
+
+  it('keeps A and B within one of each other', async () => {
+    const { url } = await start();
+    const seen = { a: 0, b: 0 };
+    for (let i = 0; i < 21; i += 1) {
+      const version = await assign(url);
+      assert.ok(version === 'a' || version === 'b');
+      seen[version] += 1;
+      assert.ok(Math.abs(seen.a - seen.b) <= 1, `after ${i + 1}: ${seen.a} A, ${seen.b} B`);
+    }
+    const counts = (await json(await fetch(`${url}/api/study/counts`))) as Counts;
+    assert.equal(counts.a, seen.a);
+    assert.equal(counts.b, seen.b);
+    assert.equal(counts.total, 21);
+  });
+
+  it('breaks a tie with the random source', async () => {
+    const low = await start({ random: () => 0.1 });
+    assert.equal(await assign(low.url), 'a');
+    assert.equal(await assign(low.url), 'b');
+    const high = await start({ random: () => 0.9 });
+    assert.equal(await assign(high.url), 'b');
+    assert.equal(await assign(high.url), 'a');
+  });
+
+  it('reports zero counts and the time of the last assignment', async () => {
+    let clock = Date.UTC(2026, 9, 29, 6, 0, 0);
+    const { url } = await start({ now: () => clock });
+    assert.deepEqual(await json(await fetch(`${url}/api/study/counts`)), { a: 0, b: 0, lastAt: null, total: 0 });
+    await assign(url);
+    clock += 60_000;
+    await assign(url);
+    const counts = (await json(await fetch(`${url}/api/study/counts`))) as Counts;
+    assert.equal(counts.lastAt, new Date(clock).toISOString());
+  });
+
+  it('keeps the counts through the nightly reset and a restart', async () => {
+    const dbPath = dbFile();
+    const first = await start({ dbPath });
+    await assign(first.url);
+    await assign(first.url);
+    await assign(first.url);
+    first.app.db.reset();
+    assert.equal(first.app.db.studyCounts().a + first.app.db.studyCounts().b, 3);
+    await first.app.close();
+
+    const second = await start({ dbPath });
+    const counts = (await json(await fetch(`${second.url}/api/study/counts`))) as Counts;
+    assert.equal(counts.total, 3);
+  });
+
+  it('answers 405 for the wrong method', async () => {
+    const { url } = await start();
+    const get = await fetch(`${url}/api/study/assign`);
+    assert.equal(get.status, 405);
+    assert.equal(get.headers.get('allow'), 'POST');
+    const postCounts = await fetch(`${url}/api/study/counts`, { method: 'POST', body: '{}' });
+    assert.equal(postCounts.status, 405);
+    assert.equal(postCounts.headers.get('allow'), 'GET');
+  });
+});

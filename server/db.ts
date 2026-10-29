@@ -9,6 +9,9 @@ import type { Action, AppState } from '../src/shared/index.ts';
 
 export type Snapshot = { version: number; state: AppState };
 
+export type StudyVersion = 'a' | 'b';
+export type StudyCounts = { a: number; b: number; lastAt: string | null };
+
 export type KinvoDb = {
   /** The current version and state. Reads memory, not disk. */
   snapshot(): Snapshot;
@@ -16,6 +19,9 @@ export type KinvoDb = {
   apply(action: Action): Snapshot;
   /** Puts the seed back and adds 1 to the version. */
   reset(): Snapshot;
+  /** Iter2.05 A/B: saves and returns the version with fewer assignments. A tie is random. */
+  assignStudy(): StudyVersion;
+  studyCounts(): StudyCounts;
   close(): void;
 };
 
@@ -24,7 +30,11 @@ export type OpenDbOptions = {
   path: string;
   /** Clock for the updated_at column. */
   now?: () => number;
+  /** Breaks a tie in assignStudy. Tests pass a fixed one. */
+  random?: () => number;
 };
+
+type CountRow = { version: StudyVersion; n: number; last: string };
 
 type StateRow = { version: number; json: string };
 
@@ -42,6 +52,7 @@ function parseState(json: string): AppState | null {
 
 export function openDb(options: OpenDbOptions): KinvoDb {
   const now = options.now ?? Date.now;
+  const random = options.random ?? Math.random;
   if (options.path !== ':memory:') mkdirSync(dirname(options.path), { recursive: true });
 
   const db = new DatabaseSync(options.path);
@@ -52,6 +63,26 @@ export function openDb(options: OpenDbOptions): KinvoDb {
     json TEXT NOT NULL,
     updated_at TEXT NOT NULL
   )`);
+  // Separate from `state`, so the nightly reset never clears the study counts.
+  db.exec(`CREATE TABLE IF NOT EXISTS study_assignments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    version TEXT NOT NULL CHECK (version IN ('a', 'b')),
+    created_at TEXT NOT NULL
+  )`);
+
+  const countStudy = db.prepare(
+    'SELECT version, COUNT(*) AS n, MAX(created_at) AS last FROM study_assignments GROUP BY version',
+  );
+  const insertStudy = db.prepare('INSERT INTO study_assignments (version, created_at) VALUES (?, ?)');
+
+  function readCounts(): StudyCounts {
+    const counts: StudyCounts = { a: 0, b: 0, lastAt: null };
+    for (const row of countStudy.all() as CountRow[]) {
+      counts[row.version] = row.n;
+      if (counts.lastAt === null || row.last > counts.lastAt) counts.lastAt = row.last;
+    }
+    return counts;
+  }
 
   const select = db.prepare('SELECT version, json FROM state WHERE id = 1');
   const upsert = db.prepare(
@@ -106,6 +137,15 @@ export function openDb(options: OpenDbOptions): KinvoDb {
       current = saved;
       return current;
     },
+    assignStudy() {
+      return inTransaction(() => {
+        const { a, b } = readCounts();
+        const version: StudyVersion = a < b ? 'a' : b < a ? 'b' : random() < 0.5 ? 'a' : 'b';
+        insertStudy.run(version, new Date(now()).toISOString());
+        return version;
+      });
+    },
+    studyCounts: readCounts,
     close() {
       db.close();
     },

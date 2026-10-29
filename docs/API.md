@@ -42,6 +42,18 @@ Body: `{ "action": <Action> }`, at most 32 KB.
 Body: `{}`. Puts the seed back, adds 1 to `version`.
 `200 { "version", "state" }`.
 
+### POST /api/study/assign
+
+Iter2.05 A/B study. Body is ignored. Saves one assignment and answers `200 { "version": "a" | "b" }`:
+the version with fewer assignments so far, or a random one on a tie, so A and B stay within one of each other.
+Rate limited like the other POST routes. Caddy exposes it outside the login gate as `POST https://kinvo.nuza.dev/go/assign`,
+which `public/go.html` (`/go`) calls.
+
+### GET /api/study/counts
+
+`200 { "a": <number>, "b": <number>, "total": <number>, "lastAt": <ISO string | null> }`. Read by the gated `/go/results` page.
+The `study_assignments` table is separate from `state`, so the nightly reset does not clear it.
+
 ### Anything else under /api
 
 `404 { "error": "not found" }`. Wrong method on a known path: `405 { "error": "method not allowed" }`.
