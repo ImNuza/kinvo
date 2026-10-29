@@ -4,12 +4,12 @@ import { NavBar, Screen } from '../components/index.ts';
 
 /**
  * Iter2 A/B experiment (Iter2.05): one public link that sends each visitor to the Maze study
- * for version A (ask during save) or version B (ask after save). Fill in the links when the
- * studies are published. Empty links show a "not open yet" message.
+ * for version A (meaning cards stacked) or version B (meaning cards side by side).
+ * Empty links show a "not open yet" message.
  */
 export const STUDY_LINKS: Record<StudyVersion, string> = {
-  a: '',
-  b: '',
+  a: 'https://t.maze.co/603496315',
+  b: 'https://t.maze.co/603503575',
 };
 
 type StudyVersion = 'a' | 'b';
