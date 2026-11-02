@@ -7,6 +7,7 @@ import { lessonRoutes } from '../screens/lessons/routes.tsx';
 import { meaningRoutes } from '../screens/meanings/routes.tsx';
 import { recordRoutes } from '../screens/record/routes.tsx';
 import { DemoPanel } from './DemoPanel.tsx';
+import { Intro } from './Intro.tsx';
 import { paths } from './paths.ts';
 import { StudyRedirect } from './StudyRedirect.tsx';
 
@@ -19,6 +20,7 @@ const TITLES: [RegExp, string][] = [
   [/^\/record/, 'Record'],
   [/^\/family\/send\//, 'Send story'],
   [/^\/family\/reply\//, 'Reply'],
+  [/^\/family\/share\//, 'Select a story'],
   [/^\/family/, 'Family'],
   [/^\/stories\/[^/]+\/meaning\/new/, 'Add meaning'],
   [/^\/stories\/[^/]+\/meanings/, 'Meanings'],
@@ -41,6 +43,7 @@ function AppLayout() {
     <div id="app-frame" className="app-frame">
       <Outlet />
       <DemoPanel />
+      <Intro />
     </div>
   );
 }

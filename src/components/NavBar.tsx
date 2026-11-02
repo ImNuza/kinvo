@@ -8,6 +8,8 @@ export type NavBarProps =
   | {
       /** Top-level tab screen: plain title, no buttons (01, 02, 06, 12). */
       title: string;
+      /** Show the Kinvo wordmark in place of the text (Archive only). The title stays as hidden text. */
+      logo?: boolean;
       trail?: never;
       current?: never;
       onBack?: never;
@@ -16,6 +18,7 @@ export type NavBarProps =
     }
   | {
       title?: never;
+      logo?: never;
       /** Ancestors, left to right. The last one is where Back goes by default. */
       trail: Crumb[];
       current: string;
@@ -34,7 +37,14 @@ export function NavBar(props: NavBarProps) {
   if (props.title !== undefined) {
     return (
       <header className="k-navbar k-navbar--title">
-        <h1 className="k-navbar__title">{props.title}</h1>
+        {props.logo ? (
+          <h1 className="k-navbar__title">
+            <img className="k-navbar__logo" src="/brand/kinvo-wordmark.png" alt="Kinvo" />
+            <span className="sr-only"> {props.title}</span>
+          </h1>
+        ) : (
+          <h1 className="k-navbar__title">{props.title}</h1>
+        )}
       </header>
     );
   }

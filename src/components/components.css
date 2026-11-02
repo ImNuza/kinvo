@@ -36,6 +36,14 @@
   font: var(--text-subtitle);
   font-weight: 500;
 }
+.k-navbar__logo {
+  display: block;
+  height: 28px;
+  width: auto;
+  /* The bar pads 12px above and 8px below its content, so lift 2px to centre in the 56px bar. */
+  position: relative;
+  top: -2px;
+}
 .k-navbar__btn {
   display: grid;
   place-items: center;

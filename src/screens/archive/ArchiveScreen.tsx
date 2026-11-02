@@ -166,7 +166,7 @@ export function ArchiveScreen() {
   const selectedStories = selectedDay ? state.stories.filter((s) => selectedDay.storyIds.includes(s.id)) : [];
 
   return (
-    <Screen nav={<NavBar title="Archive" />} tab="archive">
+    <Screen nav={<NavBar title="Archive" logo />} tab="archive">
       <section className="k-card arch-card" aria-label="Recording calendar">
         <div className="arch-head">
           <h2 className="arch-month">{formatMonth(month)}</h2>

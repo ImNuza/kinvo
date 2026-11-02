@@ -63,7 +63,7 @@ and, if you are blocked, tell the lead at once. A local workaround inside your f
 | Component | Figma | Props |
 | --- | --- | --- |
 | `Screen` | frame layout | `nav`, `children`, `footer?`, `hideTabBar?`, `tab?: 'archive'\|'record'\|'family'\|'lessons'`, `bodyClassName?` |
-| `NavBar` | Breadcrumb Bar 331:708 | `{ title }` for tab roots, or `{ trail: Crumb[], current, onBack?, backTo?, showHome? }` |
+| `NavBar` | Breadcrumb Bar 331:708 | `{ title, logo? }` for tab roots (`logo` shows the Kinvo wordmark in place of the text, Archive only, and keeps the title as hidden text), or `{ trail: Crumb[], current, onBack?, backTo?, showHome? }` |
 | `TabBar` | Navbar 314:155 | `active?` (Screen renders it for you) |
 | `Button` | Button 313:191 | `variant?: primary\|secondary\|outline\|ghost\|destructive\|destructive-outline\|link`, `size?: sm\|md\|lg` (default lg), `icon?`, `block?`, plus button attributes |
 | `ButtonLink` | Button | same look, `to` instead of `onClick` |
