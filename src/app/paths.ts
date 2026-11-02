@@ -13,7 +13,9 @@ export const paths = {
   send: (storyId: string) => `/family/send/${storyId}`,
   reply: (storyId: string) => `/family/reply/${storyId}`,
 
-  addMeaning: (storyId: string) => `/stories/${storyId}/meaning/new`,
+  /** by: a family member adding a meaning on this phone, e.g. Mum at dinner (scenario). */
+  addMeaning: (storyId: string, by?: string) =>
+    by ? `/stories/${storyId}/meaning/new?by=${encodeURIComponent(by)}` : `/stories/${storyId}/meaning/new`,
   meanings: (storyId: string) => `/stories/${storyId}/meanings`,
 
   lessons: () => '/lessons',

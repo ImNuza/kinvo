@@ -3,7 +3,7 @@ import { Avatar, Button, ChoiceChipGroup, Field, Sheet } from '../../components/
 import { useAppState, useDispatch } from '../../data/react.tsx';
 import { nowIso } from '../../lib/ids.ts';
 import { usePersona } from '../../lib/session.ts';
-import { initialsFromName, LIMITS, personIdFromName, type Relationship } from '../../shared/index.ts';
+import { initialsFromName, LIMITS, PERSON, personIdFromName, type Relationship } from '../../shared/index.ts';
 import { pronounsFor } from './people.ts';
 import './family.css';
 
@@ -45,6 +45,14 @@ export function AddMemberSheet({ open, onClose, onAdded }: AddMemberSheetProps) 
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Scenario: the first time, the sheet is filled in with Auntie Lin, as in Figma 06a.
+  const auntieLinMissing = !state.people.some((p) => p.id === PERSON.auntieLin);
+  useEffect(() => {
+    if (!open || !auntieLinMissing) return;
+    setName('Auntie Lin');
+    setRelationship('aunt');
+  }, [open, auntieLinMissing]);
 
   // The sheet puts focus on its first button when it opens. Move it on to the name box.
   useEffect(() => {

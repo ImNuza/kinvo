@@ -7,6 +7,7 @@ import { newId, nowIso } from '../../lib/ids.ts';
 import { usePersona } from '../../lib/session.ts';
 import { storyById, type Person } from '../../shared/index.ts';
 import { isJustAdded, pronounsFor, statusText, storyDetail } from './people.ts';
+import { playScriptedReply } from './scriptedReply.ts';
 import './family.css';
 
 function cardLine(person: Person, selected: boolean): string {
@@ -78,6 +79,7 @@ export function SendStoryScreen() {
     setError('');
     try {
       await dispatch({ type: 'request/send', id: newId('request'), storyId: story!.id, fromId: persona, toId: selected.id, at: nowIso() });
+      await playScriptedReply(dispatch, state, story!.id, selected.id);
       navigate(paths.reply(story!.id));
     } catch {
       setSending(false);

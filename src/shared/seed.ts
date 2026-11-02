@@ -1,5 +1,6 @@
-// Seed data: the Iter2 scenario at the moment before Auntie Lin is added.
-// Mei Xin recorded Ah Ma's swing story at Sunday lunch, sent it to Mum, and Mum added a meaning.
+// Seed data for the Iter2 easy scenario.
+// The demo starts at Sunday lunch, before Mei Xin records Ah Ma's swing story.
+// Tests can ask for the later state, where the story is saved and Mum added a meaning.
 
 import type { AppState, SuggestedReply } from './types.ts';
 
@@ -59,7 +60,24 @@ function mumLastSeen(now: number): string {
   return new Date(Math.floor(now / HOUR_MS) * HOUR_MS - 2 * HOUR_MS).toISOString();
 }
 
-export function createSeed(now: number = Date.now()): AppState {
+export type SeedOptions = {
+  now?: number;
+  /** Start after the story is saved and Mum added her meaning (the state just before Auntie Lin is added). */
+  withSwingStory?: boolean;
+};
+
+export function createSeed({ now = Date.now(), withSwingStory = false }: SeedOptions = {}): AppState {
+  const seed = fullSeed(now);
+  if (withSwingStory) return seed;
+  return {
+    ...seed,
+    stories: seed.stories.filter((s) => s.id !== SWING_STORY_ID),
+    meanings: [],
+    requests: [],
+  };
+}
+
+function fullSeed(now: number): AppState {
   return {
     schema: 1,
     people: [

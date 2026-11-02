@@ -6,8 +6,6 @@ export const MIN_SCORE = 40;
 export const MAX_SCORE = 95;
 /** A frame counts as voice when its level is above this. Same scale as useRecorder levels. */
 export const VOICE_LEVEL = 0.15;
-/** Frame length in seconds. */
-const FRAME_SEC = 0.1;
 /** Used when Ah Ma's clip length is not known yet. */
 const FALLBACK_REFERENCE_SEC = 3;
 
@@ -45,30 +43,4 @@ export function scoreAttempt(measure: AttemptMeasure, referenceSec: number): Att
   else if (ratio > 1.4) tip = 'long';
   else if (share < 0.3) tip = 'quiet';
   return { score: clamp(score, MIN_SCORE, MAX_SCORE), tip };
-}
-
-/** Reads the recording and measures it. Falls back to the live numbers when the browser cannot decode it. */
-export async function measureBlob(blob: Blob, fallback: AttemptMeasure): Promise<AttemptMeasure> {
-  try {
-    const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioCtx) return fallback;
-    const ctx = new AudioCtx();
-    try {
-      const buffer = await ctx.decodeAudioData(await blob.arrayBuffer());
-      const data = buffer.getChannelData(0);
-      const size = Math.max(1, Math.round(buffer.sampleRate * FRAME_SEC));
-      const levels: number[] = [];
-      for (let start = 0; start < data.length; start += size) {
-        const end = Math.min(data.length, start + size);
-        let sum = 0;
-        for (let i = start; i < end; i += 1) sum += (data[i] ?? 0) ** 2;
-        levels.push(Math.min(1, Math.sqrt(sum / (end - start)) * 4));
-      }
-      return { durationSec: buffer.duration, levels };
-    } finally {
-      void ctx.close().catch(() => undefined);
-    }
-  } catch {
-    return fallback;
-  }
 }

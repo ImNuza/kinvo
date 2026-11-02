@@ -48,7 +48,7 @@ const PAST_STORY_IDS = ['story-saturday-lunch', 'story-movie-date', 'story-voice
 
 describe('seed', () => {
   it('starts before Auntie Lin is added', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     assert.equal(seed.people.length, 3);
     // The swing story plus three older stories for 06c Select a story.
     assert.equal(seed.stories.length, 4);
@@ -58,13 +58,13 @@ describe('seed', () => {
   });
 
   it('gives a streak of 4', () => {
-    const { count, days } = streak(createSeed(), DEMO_TODAY);
+    const { count, days } = streak(createSeed({ withSwingStory: true }), DEMO_TODAY);
     assert.equal(count, 4);
     assert.deepEqual(days, ['2026-09-09', '2026-09-10', '2026-09-11', '2026-09-12']);
   });
 
   it('gives one lesson from Mum', () => {
-    const list = lessons(createSeed());
+    const list = lessons(createSeed({ withSwingStory: true }));
     assert.equal(list.length, 1);
     assert.equal(list[0]?.storyId, SWING_STORY_ID);
     assert.equal(list[0]?.phrase.english, SCENARIO.suggestedReply.english);
@@ -75,11 +75,11 @@ describe('seed', () => {
 
 describe('scenario from the seed', () => {
   it('runs the whole Auntie Lin flow', () => {
-    let state = createSeed();
+    let state = createSeed({ withSwingStory: true });
     const steps = scenarioActions(state);
 
     state = reduce(state, steps.addLin);
-    assert.equal(personIdFromName('Auntie Lin', createSeed().people), PERSON.auntieLin);
+    assert.equal(personIdFromName('Auntie Lin', createSeed({ withSwingStory: true }).people), PERSON.auntieLin);
     const lin = state.people.find((p) => p.id === PERSON.auntieLin);
     assert.ok(lin);
     assert.equal(lin.initials, 'AL');
@@ -120,7 +120,7 @@ describe('scenario from the seed', () => {
   });
 
   it('does not change the seed object', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const before = JSON.stringify(seed);
     const steps = scenarioActions(seed);
     run(seed, steps.addLin, steps.send, steps.meaning, steps.agree);
@@ -128,7 +128,7 @@ describe('scenario from the seed', () => {
   });
 
   it('unagree clears the agreed meaning', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const steps = scenarioActions(seed);
     let state = run(seed, steps.addLin, steps.send, steps.meaning, steps.agree);
     state = reduce(state, { type: 'meaning/unagree', storyId: SWING_STORY_ID });
@@ -140,7 +140,7 @@ describe('scenario from the seed', () => {
 
 describe('personIdFromName', () => {
   it('adds a number when the id is taken', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const first = scenarioActions(seed).addLin;
     const withLin = reduce(seed, first);
     assert.equal(personIdFromName('Auntie Lin', withLin.people), 'auntie-lin-2');
@@ -149,7 +149,7 @@ describe('personIdFromName', () => {
 
 describe('duplicate and unknown ids', () => {
   it('ignores a duplicate id for every action that adds a record', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const steps = scenarioActions(seed);
     const state = run(seed, steps.addLin, steps.send, steps.meaning, steps.linReply, {
       type: 'story/create',
@@ -179,7 +179,7 @@ describe('duplicate and unknown ids', () => {
   });
 
   it('ignores actions for an unknown story', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const missing = 'story-missing';
     const actions: Action[] = [
       { type: 'story/update', id: missing, title: 'x', at: '2026-09-13T22:00:00+08:00' },
@@ -197,7 +197,7 @@ describe('duplicate and unknown ids', () => {
   });
 
   it('ignores an agreement for a meaning that belongs to another story', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const state = reduce(seed, {
       type: 'story/create',
       id: 'story-two',
@@ -218,7 +218,7 @@ describe('duplicate and unknown ids', () => {
 
 describe('story/delete', () => {
   it('removes the story and everything linked to it', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const steps = scenarioActions(seed);
     const state = run(
       seed,
@@ -239,7 +239,7 @@ describe('story/delete', () => {
   });
 
   it('keeps other stories and their items', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const two: Action = {
       type: 'story/create',
       id: 'story-two',
@@ -267,7 +267,7 @@ describe('story/delete', () => {
 
 describe('other actions', () => {
   it('story/update patches only the given fields', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const state = reduce(seed, { type: 'story/update', id: SWING_STORY_ID, title: 'New title', at: '2026-09-13T22:00:00+08:00' });
     const story = state.stories[0];
     assert.equal(story?.title, 'New title');
@@ -277,7 +277,7 @@ describe('other actions', () => {
   });
 
   it('attempt/add rounds the score and keeps it between 0 and 100', () => {
-    const seed = createSeed();
+    const seed = createSeed({ withSwingStory: true });
     const state = reduce(seed, { type: 'attempt/add', id: 'a1', storyId: SWING_STORY_ID, personId: PERSON.mum, score: 79.6, at: '2026-09-13T22:00:00+08:00' });
     assert.equal(state.attempts[0]?.score, 80);
   });

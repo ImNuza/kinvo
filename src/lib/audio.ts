@@ -1,4 +1,4 @@
-// Microphone recording and playback. Audio never leaves the phone:
+// Simulated recording and real playback. Audio never leaves the phone:
 // blobs stay in memory or in this browser's IndexedDB, never in AppState or on the server.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -18,7 +18,7 @@ export type Recorder = {
   blob: Blob | null;
   /** Object URL of blob, for <audio> or usePlayer. */
   url: string | null;
-  /** Asks for the mic (first time) and starts. */
+  /** Starts the simulated recording. */
   start: () => Promise<void>;
   /** Stops and resolves with the recording. */
   stop: () => Promise<Blob | null>;
@@ -27,7 +27,47 @@ export type Recorder = {
 };
 
 const MAX_LEVELS = 64;
+const TICK_MS = 100;
+/** The silent stand-in clip is never longer than this. */
+const MAX_CLIP_SEC = 60;
 
+/** A silent 8 kHz WAV file, so "play your recording" works without real audio. */
+function silentWav(seconds: number): Blob {
+  const rate = 8000;
+  const samples = Math.max(1, Math.round(rate * Math.min(Math.max(seconds, 1), MAX_CLIP_SEC)));
+  const buffer = new ArrayBuffer(44 + samples);
+  const view = new DataView(buffer);
+  const text = (offset: number, value: string) => {
+    for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
+  };
+  text(0, 'RIFF');
+  view.setUint32(4, 36 + samples, true);
+  text(8, 'WAVE');
+  text(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, rate, true);
+  view.setUint32(28, rate, true);
+  view.setUint16(32, 1, true);
+  view.setUint16(34, 8, true);
+  text(36, 'data');
+  view.setUint32(40, samples, true);
+  new Uint8Array(buffer, 44).fill(128);
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
+/** Next waveform level: a smooth random walk between 0.2 and 0.95, like speech. */
+function nextLevel(prev: number): number {
+  const target = 0.2 + Math.random() * 0.75;
+  return Math.min(0.95, Math.max(0.2, prev + (target - prev) * 0.6));
+}
+
+/**
+ * Simulated recorder. The prototype never asks for the microphone: the timer counts up,
+ * the waveform moves on its own, and stop() returns a silent clip of the same length.
+ * The brief allows simulated features, and a demo must not stop at a permission prompt.
+ */
 export function useRecorder(): Recorder {
   const [status, setStatus] = useState<RecorderStatus>('idle');
   const [elapsedSec, setElapsed] = useState(0);
@@ -35,127 +75,56 @@ export function useRecorder(): Recorder {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [url, setUrl] = useState<string | null>(null);
 
-  const media = useRef<MediaRecorder | null>(null);
-  const stream = useRef<MediaStream | null>(null);
-  const ctx = useRef<AudioContext | null>(null);
-  const raf = useRef<number | null>(null);
-  const chunks = useRef<Blob[]>([]);
   const startedAt = useRef(0);
-  const stopResolve = useRef<((b: Blob | null) => void) | null>(null);
-  const keep = useRef(true);
-  const mounted = useRef(true);
+  const elapsedRef = useRef(0);
 
-  const cleanup = useCallback(() => {
-    if (raf.current !== null) cancelAnimationFrame(raf.current);
-    raf.current = null;
-    stream.current?.getTracks().forEach((t) => t.stop());
-    stream.current = null;
-    void ctx.current?.close().catch(() => undefined);
-    ctx.current = null;
-  }, []);
-
+  // The timer and the waveform run while the status is "recording". Tying them to the status
+  // (not to start()) keeps them running when React mounts the screen twice in development.
   useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-      const rec = media.current;
-      if (rec && rec.state !== 'inactive') {
-        keep.current = false;
-        rec.stop();
-      }
-      cleanup();
-    };
-  }, [cleanup]);
+    if (status !== 'recording') return;
+    let level = 0.5;
+    const timer = window.setInterval(() => {
+      level = nextLevel(level);
+      const sampled = level;
+      setLevels((prev) => [...prev.slice(-(MAX_LEVELS - 1)), sampled]);
+      const seconds = Math.floor((performance.now() - startedAt.current) / 1000);
+      elapsedRef.current = seconds;
+      setElapsed(seconds);
+    }, TICK_MS);
+    return () => window.clearInterval(timer);
+  }, [status]);
+
   useEffect(() => () => {
     if (url) URL.revokeObjectURL(url);
   }, [url]);
 
   const start = useCallback(async () => {
-    if (typeof MediaRecorder === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
-      setStatus('unsupported');
-      return;
-    }
-    setStatus('requesting');
-    try {
-      const s = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // The screen closed while the permission prompt was open: release the mic at once.
-      if (!mounted.current) {
-        s.getTracks().forEach((t) => t.stop());
-        return;
-      }
-      stream.current = s;
-      const rec = new MediaRecorder(s);
-      media.current = rec;
-      chunks.current = [];
-      keep.current = true;
-      rec.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.current.push(e.data);
-      };
-      rec.onstop = () => {
-        const out = keep.current ? new Blob(chunks.current, { type: rec.mimeType || 'audio/webm' }) : null;
-        setBlob(out);
-        setUrl(out ? URL.createObjectURL(out) : null);
-        setStatus(out ? 'stopped' : 'idle');
-        cleanup();
-        stopResolve.current?.(out);
-        stopResolve.current = null;
-      };
-
-      const audioCtx = new AudioContext();
-      ctx.current = audioCtx;
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 512;
-      audioCtx.createMediaStreamSource(s).connect(analyser);
-      const data = new Uint8Array(analyser.fftSize);
-      let lastPush = 0;
-      const tick = (t: number) => {
-        analyser.getByteTimeDomainData(data);
-        let sum = 0;
-        for (const v of data) sum += ((v - 128) / 128) ** 2;
-        const rms = Math.sqrt(sum / data.length);
-        if (t - lastPush > 100) {
-          lastPush = t;
-          setLevels((prev) => [...prev.slice(-(MAX_LEVELS - 1)), Math.min(1, rms * 6)]);
-          setElapsed(Math.floor((performance.now() - startedAt.current) / 1000));
-        }
-        raf.current = requestAnimationFrame(tick);
-      };
-
-      setBlob(null);
-      setUrl(null);
-      setLevels([]);
-      setElapsed(0);
-      startedAt.current = performance.now();
-      rec.start(250);
-      raf.current = requestAnimationFrame(tick);
-      setStatus('recording');
-    } catch (err) {
-      cleanup();
-      setStatus(err instanceof DOMException && err.name === 'NotAllowedError' ? 'denied' : 'error');
-    }
-  }, [cleanup]);
-
-  const stop = useCallback(() => {
-    const rec = media.current;
-    if (!rec || rec.state === 'inactive') return Promise.resolve(blob);
-    return new Promise<Blob | null>((resolve) => {
-      stopResolve.current = resolve;
-      keep.current = true;
-      rec.stop();
-    });
-  }, [blob]);
-
-  const discard = useCallback(() => {
-    const rec = media.current;
-    keep.current = false;
-    if (rec && rec.state !== 'inactive') rec.stop();
-    else cleanup();
     setBlob(null);
     setUrl(null);
     setLevels([]);
     setElapsed(0);
+    elapsedRef.current = 0;
+    startedAt.current = performance.now();
+    setStatus('recording');
+  }, []);
+
+  const stop = useCallback(async () => {
+    if (status !== 'recording') return blob;
+    const out = silentWav(elapsedRef.current);
+    setBlob(out);
+    setUrl(URL.createObjectURL(out));
+    setStatus('stopped');
+    return out;
+  }, [blob, status]);
+
+  const discard = useCallback(() => {
+    setBlob(null);
+    setUrl(null);
+    setLevels([]);
+    setElapsed(0);
+    elapsedRef.current = 0;
     setStatus('idle');
-  }, [cleanup]);
+  }, []);
 
   return { status, elapsedSec, levels, blob, url, start, stop, discard };
 }

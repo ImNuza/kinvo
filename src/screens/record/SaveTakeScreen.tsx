@@ -26,6 +26,7 @@ function SaveTakeForm({ story }: { story: Story }) {
   const dispatch = useDispatch();
   const variant = useVariant();
   const player = useStoryClip(story.id);
+  const mum = useAppState().people.find((p) => p.relationship === 'mum');
 
   const [title, setTitle] = useState(story.title);
   const [note, setNote] = useState(story.note);
@@ -72,7 +73,7 @@ function SaveTakeForm({ story }: { story: Story }) {
           icon="send"
           block
           disabled={titleEmpty || saving}
-          onClick={() => void save(paths.send(storyId))}
+          onClick={() => void save(paths.addMeaning(storyId, mum?.id))}
         >
           Save and ask a helper
         </Button>

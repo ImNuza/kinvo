@@ -5,7 +5,7 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, afterEach, before, describe, it } from 'node:test';
-import { PERSON, SCENARIO, SWING_STORY_ID, createSeed } from '../src/shared/index.ts';
+import { PERSON, SCENARIO, createSeed } from '../src/shared/index.ts';
 import type { Action, AppState } from '../src/shared/index.ts';
 import { createApp } from './app.ts';
 import type { App, AppOptions } from './app.ts';
@@ -62,10 +62,13 @@ function post(url: string, path: string, body: unknown, headers: Record<string, 
   });
 }
 
+/** A story that is in the demo seed from the start. */
+const SEEDED_STORY_ID = 'story-voice-note';
+
 const replyAction = (id: string, text = 'Hello'): Action => ({
   type: 'reply/add',
   id,
-  storyId: SWING_STORY_ID,
+  storyId: SEEDED_STORY_ID,
   authorId: PERSON.mum,
   text,
   at: SCENARIO.times.mumReply,
@@ -144,7 +147,7 @@ describe('POST /api/actions', () => {
   it('answers 400 for an invalid action', async () => {
     const { url } = await start();
     const bodies: unknown[] = [
-      { action: { type: 'reply/add', id: 'bad id!', storyId: SWING_STORY_ID, authorId: 'mum', text: 'x', at: SCENARIO.times.mumReply } },
+      { action: { type: 'reply/add', id: 'bad id!', storyId: SEEDED_STORY_ID, authorId: 'mum', text: 'x', at: SCENARIO.times.mumReply } },
       { action: { ...replyAction('r1'), text: 'a'.repeat(1001) } },
       { action: { type: 'nope' } },
       { action: null },

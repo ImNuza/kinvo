@@ -1,17 +1,35 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths.ts';
 import { Button, Field, NavBar, PhraseCard, PlayButton, Screen } from '../../components/index.ts';
 import { useAppState, useDispatch } from '../../data/react.tsx';
 import { AH_MA_CLIP_URL, saveClip, useClipUrl, usePlayer, useRecorder } from '../../lib/audio.ts';
 import { newId, nowIso } from '../../lib/ids.ts';
 import { usePersona } from '../../lib/session.ts';
-import { formatDuration, meaningsForStory, personById, storyById } from '../../shared/index.ts';
-import type { Story, SuggestedReply } from '../../shared/index.ts';
+import { PERSON, SCENARIO, SWING_STORY_ID, formatDuration, meaningsForStory, personById, storyById } from '../../shared/index.ts';
+import type { AppState, Person, Story, SuggestedReply } from '../../shared/index.ts';
 import { LiveMessage } from './LiveMessage.tsx';
 import './meanings.css';
 
-/** 09 Add meaning (318:445). */
+type Script = { text: string; reply: SuggestedReply | null; at: string };
+
+/**
+ * Scenario text for the swing story, so the demo follows Iter2.02 word for word.
+ * Only used while that person has no meaning on the story yet. The time is the scenario time.
+ */
+function scenarioScript(state: AppState, story: Story, author: Person | undefined): Script | null {
+  if (story.id !== SWING_STORY_ID || !author) return null;
+  if (meaningsForStory(state, story.id).some((m) => m.authorId === author.id)) return null;
+  if (author.relationship === 'mum') {
+    return { text: SCENARIO.mumMeaning, reply: { ...SCENARIO.suggestedReply }, at: SCENARIO.times.mumMeaning };
+  }
+  if (author.id === PERSON.auntieLin) {
+    return { text: SCENARIO.auntieLinMeaning, reply: null, at: SCENARIO.times.auntieLinMeaning };
+  }
+  return null;
+}
+
+/** 09 Add meaning (318:445). ?by=<person> means that person adds the meaning on this phone. */
 export function AddMeaningScreen() {
   const { storyId = '' } = useParams();
   const state = useAppState();
@@ -38,6 +56,13 @@ function AddMeaningForm({ story }: { story: Story }) {
   const dispatch = useDispatch();
   const persona = usePersona();
   const state = useAppState();
+  const [search] = useSearchParams();
+
+  // Scenario: Mum adds her meaning on Mei Xin's phone at dinner.
+  const byId = search.get('by');
+  const helper = byId && byId !== persona ? personById(state, byId) : undefined;
+  const authorId = helper?.id ?? persona;
+  const script = scenarioScript(state, story, personById(state, authorId));
 
   const existing = meaningsForStory(state, storyId);
   const newest = existing[existing.length - 1];
@@ -45,14 +70,14 @@ function AddMeaningForm({ story }: { story: Story }) {
     [...existing].reverse().find((m) => m.suggestedReply)?.suggestedReply ?? null;
   const creator = personById(state, story.createdBy);
 
-  const [meaning, setMeaning] = useState('');
+  const [meaning, setMeaning] = useState(script?.text ?? '');
   const [contextEdit, setContextEdit] = useState<string | null>(null);
-  const [phraseDraft, setPhraseDraft] = useState<SuggestedReply | null>(null);
+  const [phraseDraft, setPhraseDraft] = useState<SuggestedReply | null>(currentReply ? null : (script?.reply ?? null));
   const [editingPhrase, setEditingPhrase] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
-  const context = contextEdit ?? newest?.context ?? '';
+  const context = contextEdit ?? newest?.context ?? (script ? SCENARIO.context : '');
 
   // Ah Ma's clip: the copy on this phone, else the placeholder.
   const clipUrl = useClipUrl(storyId);
@@ -71,8 +96,8 @@ function AddMeaningForm({ story }: { story: Story }) {
           ? 'The microphone did not start. Try again.'
           : '';
 
-  const showPhraseInputs = editingPhrase || currentReply === null;
   const shownReply = phraseDraft ?? currentReply;
+  const showPhraseInputs = editingPhrase || shownReply === null;
 
   const startEditing = () => {
     setPhraseDraft(phraseDraft ?? currentReply ?? { phrase: '', english: '' });
@@ -99,18 +124,19 @@ function AddMeaningForm({ story }: { story: Story }) {
     setSaving(true);
     setSaveError(false);
     try {
-      if (recorder.blob) await saveClip(`reply-${storyId}-${persona}`, recorder.blob);
+      if (recorder.blob) await saveClip(`reply-${storyId}-${authorId}`, recorder.blob);
       await dispatch({
         type: 'meaning/add',
         id: newId('meaning'),
         storyId,
-        authorId: persona,
+        authorId,
         text: meaning.trim(),
         context: context.trim(),
         suggestedReply: suggestedReplyToSave(),
-        at: nowIso(),
+        at: script && meaning.trim() === script.text ? script.at : nowIso(),
       });
-      navigate(paths.meanings(storyId), { replace: true });
+      // Figma 09: Save goes to Family when a family member added the meaning on this phone.
+      navigate(helper ? paths.family() : paths.meanings(storyId), { replace: true });
     } catch {
       setSaving(false);
       setSaveError(true);

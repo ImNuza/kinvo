@@ -7,7 +7,7 @@ import { newId, nowIso } from '../../lib/ids.ts';
 import { usePersona } from '../../lib/session.ts';
 import { paths } from '../../app/paths.ts';
 import { lessons, type Lesson } from '../../shared/index.ts';
-import { TIP_TEXT, measureBlob, scoreAttempt, type AttemptResult } from './score.ts';
+import { TIP_TEXT, scoreAttempt, type AttemptResult } from './score.ts';
 import './lessons.css';
 
 const TRAIL = [{ label: 'Lessons', to: paths.lessons() }];
@@ -60,8 +60,8 @@ function PractiseBody({ lesson }: { lesson: Lesson }) {
     const blob = await recorder.stop();
     if (!blob) return;
     setBusy(true);
-    const measure = await measureBlob(blob, { durationSec: elapsed, levels });
-    const outcome = scoreAttempt(measure, reference.durationSec);
+    // The recording is simulated, so the score uses its length and the simulated levels.
+    const outcome = scoreAttempt({ durationSec: elapsed, levels }, reference.durationSec);
     const id = newId('attempt');
     try {
       await saveClip(id, blob);

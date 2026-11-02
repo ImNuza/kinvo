@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { Button, ButtonLink, Icon, NavBar, PlayButton, Screen } from '../../components/index.ts';
 import { paths } from '../../app/paths.ts';
 import { useAppState } from '../../data/react.tsx';
@@ -30,6 +30,8 @@ export function SavedScreen() {
   const { count, days: streakDays } = streak(state, DEMO_TODAY);
   const strip = Array.from({ length: STRIP_DAYS }, (_, i) => addDays(DEMO_TODAY, i - (STRIP_DAYS - 1)));
   const playLabel = player.playing ? 'Pause recording' : 'Play recording';
+  // Scenario: Mum is over for dinner and adds her meaning on this phone (Figma 05 links the story to 09).
+  const mum = state.people.find((p) => p.relationship === 'mum');
 
   return (
     <Screen nav={<NavBar trail={[{ label: 'Record', to: paths.record() }]} current="Saved" />} tab="record">
@@ -63,7 +65,15 @@ export function SavedScreen() {
         </ul>
       </div>
 
-      <h2 className="rec-saved__title t-subtitle">{story.title}</h2>
+      <h2 className="rec-saved__title t-subtitle">
+        <Link
+          to={paths.addMeaning(story.id, mum?.id)}
+          className="rec-saved__link"
+          aria-label={mum ? `${story.title}. ${mum.name} adds a meaning` : `${story.title}. Add a meaning`}
+        >
+          {story.title}
+        </Link>
+      </h2>
       <div className="rec-play">
         <PlayButton playing={player.playing} onClick={player.toggle} label="Play recording" tone="primary" />
         <span className="t-subtitle" aria-hidden="true">
