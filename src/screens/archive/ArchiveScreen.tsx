@@ -67,7 +67,9 @@ function ClipPlay({ storyId, title }: { storyId: string | null; title: string })
 }
 
 function StoryRow({ state, story }: { state: AppState; story: Story }) {
-  const pill = storyPill(state, story.id);
+  // In the Archive an agreed story reads as "Ready": its lesson is ready to practise.
+  const status = storyPill(state, story.id);
+  const pill = status === 'agreed' ? 'ready' : status;
   return (
     <li className="arch-story">
       <div className="arch-story__text">
