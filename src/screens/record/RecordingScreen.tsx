@@ -60,17 +60,22 @@ export function RecordingScreen() {
   }, [live]);
 
   /**
-   * Creates the story as a draft. Returns its id. The first recording is the scenario's swing story,
-   * so it gets the scenario id and Ah Ma's term. The recording is simulated, so no clip is saved
-   * and later screens play the placeholder of Ah Ma's voice.
+   * Creates the story as a draft. Returns its id. The recording is the scenario's swing story, so it
+   * gets the scenario id and Ah Ma's term. A new take replaces the swing story until someone adds a
+   * meaning to it, so repeated demo takes never pile up as extra drafts. After that, a recording is a
+   * separate story. The recording is simulated, so no clip is saved and later screens play the
+   * placeholder of Ah Ma's voice.
    */
   async function createDraft(durationSec: number): Promise<string> {
-    const id = storyById(state, SWING_STORY_ID) ? newId('story') : SWING_STORY_ID;
+    const swing = storyById(state, SWING_STORY_ID);
+    const swingInUse = state.meanings.some((m) => m.storyId === SWING_STORY_ID);
+    const id = swing && swingInUse ? newId('story') : SWING_STORY_ID;
+    if (swing && !swingInUse) await dispatch({ type: 'story/delete', id: SWING_STORY_ID });
     await dispatch({
       type: 'story/create',
       id,
-      title: SCENARIO.storyTitle,
-      note: SCENARIO.storyNote,
+      title: id === SWING_STORY_ID ? SCENARIO.storyTitle : 'New recording',
+      note: id === SWING_STORY_ID ? SCENARIO.storyNote : '',
       place: SCENARIO.place,
       occasion: SCENARIO.occasion,
       date: DEMO_TODAY,

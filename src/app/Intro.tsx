@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import './intro.css';
 
-const SEEN_KEY = 'kinvo.intro.seen';
-
 // Timings in ms. The CSS delays and durations in intro.css match these.
 const HOLD_MS = 2100;
 const FADE_MS = 400;
@@ -21,28 +19,12 @@ const PIECES = [
   { name: 'tagline', x: 30, y: 188, w: 540, h: 31 },
 ] as const;
 
-// Set once the intro has been shown in this page load. This covers blocked storage.
+// Set once the intro has been shown in this page load, so moving between screens never replays it.
+// A refresh starts a new page load, so the intro plays again.
 let shownThisLoad = false;
 
-function readSeen(): boolean {
-  try {
-    return window.sessionStorage.getItem(SEEN_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
-function writeSeen() {
-  try {
-    window.sessionStorage.setItem(SEEN_KEY, '1');
-  } catch {
-    // Storage blocked: shownThisLoad still stops a second showing in this page load.
-  }
-}
-
 function shouldShow(): boolean {
-  if (new URLSearchParams(window.location.search).get('intro') === '1') return true;
-  return !shownThisLoad && !readSeen();
+  return !shownThisLoad;
 }
 
 function prefersReducedMotion(): boolean {
@@ -55,7 +37,7 @@ function prefersReducedMotion(): boolean {
 
 type Phase = 'in' | 'out' | 'done';
 
-/** Logo intro. Covers the phone frame once per browser session (always with ?intro=1). */
+/** Logo intro. Covers the phone frame on every page load, including a refresh. */
 export function Intro() {
   const [phase, setPhase] = useState<Phase>(() => (shouldShow() ? 'in' : 'done'));
   const [reduced] = useState(prefersReducedMotion);
@@ -63,9 +45,7 @@ export function Intro() {
   const skip = useCallback(() => setPhase((p) => (p === 'in' ? 'out' : p)), []);
 
   useEffect(() => {
-    if (phase === 'done') return;
-    shownThisLoad = true;
-    writeSeen();
+    if (phase !== 'done') shownThisLoad = true;
   }, [phase]);
 
   useEffect(() => {

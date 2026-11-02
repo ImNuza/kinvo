@@ -116,6 +116,7 @@ button.arch-day:hover:not(.arch-day--today) {
   flex-direction: column;
 }
 .arch-story {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -132,6 +133,16 @@ button.arch-day:hover:not(.arch-day--today) {
 }
 .arch-story__title:hover {
   text-decoration: underline;
+}
+/* The whole row opens the story. The play button stays on top so it still plays. */
+.arch-story__title::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.arch-story .k-play {
+  position: relative;
+  z-index: 1;
 }
 
 .arch-legend {
