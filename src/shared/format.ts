@@ -27,6 +27,12 @@ export function formatDay(date: string): string {
   return `${WEEKDAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
 }
 
+/** "2026-09-13" -> "13 Sep" */
+export function formatDayMonth(date: string): string {
+  const d = new Date(`${date}T12:00:00Z`);
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+}
+
 /** "2026-09" -> "September 2026" */
 export function formatMonth(yearMonth: string): string {
   const d = new Date(`${yearMonth}-01T12:00:00Z`);

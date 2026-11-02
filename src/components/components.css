@@ -229,7 +229,7 @@
 }
 .k-avatar--32 .k-avatar__dot { width: 10px; height: 10px; right: -2px; bottom: -1px; }
 .k-avatar__dot--online { background: var(--success); }
-.k-avatar__dot--offline { background: var(--text-out); }
+.k-avatar__dot--offline { border-color: var(--input); background: var(--card); }
 
 /* Choice chips */
 .k-chips {
@@ -349,6 +349,13 @@
   color: var(--foreground);
 }
 .k-play--primary { color: var(--primary); }
+.k-play--filled {
+  width: 34px;
+  height: 34px;
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
 .k-play:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* Waveform */
@@ -460,36 +467,44 @@
 
 .k-alert {
   position: relative;
-  width: 270px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 310px;
+  max-width: calc(100% - 2 * var(--gutter));
+  padding: var(--space-6) var(--gutter) var(--gutter);
   border-radius: var(--radius-xl);
   background: var(--card);
   box-shadow: var(--shadow-alert);
   animation: k-pop 180ms ease-out;
 }
 .k-alert:focus { outline: none; }
+.k-alert__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid var(--destructive);
+  border-radius: var(--radius-full);
+  color: var(--destructive);
+}
 .k-alert__text {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-5) var(--space-4) var(--space-4);
+  gap: var(--space-3);
+  padding-top: var(--space-1);
   text-align: center;
 }
 .k-alert__title { font: var(--text-title); }
-.k-alert__action {
-  display: block;
+.k-alert__message { color: var(--muted-foreground); }
+.k-alert__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
-  min-height: 46px;
-  border: 0;
-  border-top: 1px solid var(--border);
-  background: none;
-  color: var(--primary);
-  font: var(--text-title);
-  font-weight: 400;
+  padding-top: var(--space-2);
 }
-.k-alert__action:hover { background: var(--secondary); }
-.k-alert__action--bold { font-weight: 600; }
-.k-alert__action--destructive { color: var(--destructive); }
 
 @keyframes k-fade {
   from { opacity: 0; }

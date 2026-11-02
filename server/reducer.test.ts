@@ -44,11 +44,14 @@ function scenarioActions(state: AppState): { addLin: Action; send: Action; meani
   };
 }
 
+const PAST_STORY_IDS = ['story-saturday-lunch', 'story-movie-date', 'story-voice-note'];
+
 describe('seed', () => {
   it('starts before Auntie Lin is added', () => {
     const seed = createSeed();
     assert.equal(seed.people.length, 3);
-    assert.equal(seed.stories.length, 1);
+    // The swing story plus three older stories for 06c Select a story.
+    assert.equal(seed.stories.length, 4);
     assert.equal(seed.meanings.length, 1);
     assert.equal(storyPill(seed, SWING_STORY_ID), 'ready');
     assert.equal(meaningsDiffer(seed, SWING_STORY_ID), false);
@@ -227,7 +230,7 @@ describe('story/delete', () => {
       { type: 'attempt/add', id: 'attempt-1', storyId: SWING_STORY_ID, personId: PERSON.mum, score: 80, at: '2026-09-13T22:05:00+08:00' },
       { type: 'story/delete', id: SWING_STORY_ID },
     );
-    assert.equal(state.stories.length, 0);
+    assert.deepEqual(state.stories.map((s) => s.id), PAST_STORY_IDS);
     assert.equal(state.meanings.length, 0);
     assert.equal(state.replies.length, 0);
     assert.equal(state.requests.length, 0);
@@ -256,7 +259,7 @@ describe('story/delete', () => {
       { type: 'reply/add', id: 'reply-two', storyId: 'story-two', authorId: PERSON.mum, text: 'Hello', at: '2026-09-13T22:01:00+08:00' },
       { type: 'story/delete', id: SWING_STORY_ID },
     );
-    assert.deepEqual(state.stories.map((s) => s.id), ['story-two']);
+    assert.deepEqual(state.stories.map((s) => s.id), [...PAST_STORY_IDS, 'story-two']);
     assert.deepEqual(state.replies.map((r) => r.id), ['reply-two']);
     assert.equal(state.meanings.length, 0);
   });

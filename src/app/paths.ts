@@ -9,6 +9,7 @@ export const paths = {
   saved: (storyId: string) => `/record/saved/${storyId}`,
 
   family: () => '/family',
+  selectStory: (personId: string) => `/family/share/${personId}`,
   send: (storyId: string) => `/family/send/${storyId}`,
   reply: (storyId: string) => `/family/reply/${storyId}`,
 

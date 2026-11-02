@@ -19,6 +19,8 @@ export type Person = {
   initials: string;
   relationship: Relationship;
   online: boolean;
+  /** When an offline person was last online. Shown as "Last online 2h ago" on 06. */
+  lastSeenAt?: IsoTime;
   addedAt: IsoTime;
   addedBy: PersonId | null;
 };

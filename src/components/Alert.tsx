@@ -1,5 +1,7 @@
 import { useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { Button, type ButtonVariant } from './Button.tsx';
+import { Icon, type IconName } from './Icon.tsx';
 import { overlayRoot, useModal } from './useModal.ts';
 
 export type AlertAction = {
@@ -17,10 +19,18 @@ export type AlertProps = {
   actions: AlertAction[];
   /** Escape key. Usually the same as the "keep going" action. */
   onDismiss?: () => void;
+  /** Icon in a red ring above the title, e.g. "warn" on 03a. */
+  icon?: IconName;
 };
 
-/** iOS-style alert (03a). Renders inside the phone frame. */
-export function Alert({ open, title, message, actions, onDismiss }: AlertProps) {
+const VARIANT: Record<NonNullable<AlertAction['tone']>, ButtonVariant> = {
+  bold: 'primary',
+  default: 'outline',
+  destructive: 'destructive',
+};
+
+/** Alert dialog (03a): icon, title, message and full-width stacked buttons. Renders inside the phone frame. */
+export function Alert({ open, title, message, actions, onDismiss, icon }: AlertProps) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const messageId = useId();
@@ -38,6 +48,11 @@ export function Alert({ open, title, message, actions, onDismiss }: AlertProps) 
         ref={ref}
         tabIndex={-1}
       >
+        {icon && (
+          <span className="k-alert__icon">
+            <Icon name={icon} size={22} />
+          </span>
+        )}
         <div className="k-alert__text">
           <h2 id={titleId} className="k-alert__title">
             {title}
@@ -46,17 +61,20 @@ export function Alert({ open, title, message, actions, onDismiss }: AlertProps) 
             {message}
           </p>
         </div>
-        {actions.map((a) => (
-          <button
-            key={a.label}
-            type="button"
-            className={`k-alert__action k-alert__action--${a.tone ?? 'default'}`}
-            onClick={a.onClick}
-            data-autofocus={a.tone === 'bold' ? true : undefined}
-          >
-            {a.label}
-          </button>
-        ))}
+        <div className="k-alert__actions">
+          {actions.map((a) => (
+            <Button
+              key={a.label}
+              variant={VARIANT[a.tone ?? 'default']}
+              size="md"
+              block
+              onClick={a.onClick}
+              data-autofocus={a.tone === 'bold' ? true : undefined}
+            >
+              {a.label}
+            </Button>
+          ))}
+        </div>
       </div>
     </div>,
     overlayRoot(),

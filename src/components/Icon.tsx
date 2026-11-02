@@ -57,6 +57,9 @@ const ICONS = {
   },
   skip: { paths: ['M5 5L15 12L5 19V5ZM17 5H19V19H17V5Z'], fill: true },
   'arrow-right': { paths: ['M5 12H19M13 18L19 12L13 6'], strokeWidth: 2.2 },
+  search: { paths: ['M11 18C14.87 18 18 14.87 18 11C18 7.13 14.87 4 11 4C7.13 4 4 7.13 4 11C4 14.87 7.13 18 11 18Z', 'M20 20L16 16'] },
+  plus: { paths: ['M12 5V19M5 12H19'] },
+  sparkle: { paths: ['M12 3L13.8 9.2L20 11L13.8 12.8L12 19L10.2 12.8L4 11L10.2 9.2L12 3Z'], fill: true },
   'chev-left': { paths: ['M15 6L9 12L15 18'] },
   'chev-right': { paths: ['M9 6L15 12L9 18'] },
   listen: {

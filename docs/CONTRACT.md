@@ -75,9 +75,9 @@ and, if you are blocked, tell the lead at once. A local workaround inside your f
 | `ThreadReply` | Thread Reply 373:2149 | `authorName`, `authorInitials`, `createdAt`, `text` |
 | `PhraseCard` | Reply Field 314:225 | `label`, `phrase`, `english`, `tone?: clay\|card` |
 | `Sheet` | 06a | `open`, `onClose`, `title`, `leftAction?`, `rightAction?`, `children` |
-| `Alert` | 03a | `open`, `title`, `message`, `actions: {label,onClick,tone?: default\|bold\|destructive}[]`, `onDismiss?` |
+| `Alert` | 03a | `open`, `title`, `message`, `actions: {label,onClick,tone?: default\|bold\|destructive}[]` (outline, primary, red buttons), `onDismiss?`, `icon?` |
 | `Waveform` | 03, 04, 13 | `levels?` (live 0..1), `bars?`, `tone?: heritage\|primary\|muted`, `height?`, `seed?`, `progress?` |
-| `PlayButton` | 01, 05, 09, 13 | `playing`, `onClick`, `label` ("Play ..."), `tone?` |
+| `PlayButton` | 01, 05, 09, 09a, 13 | `playing`, `onClick`, `label` ("Play ..."), `tone?: default\|primary\|filled` |
 | `Checkbox` | 07 | `checked`, `onChange`, `children` |
 | `Icon` | Icons 313:2 | `name`, `size?` |
 

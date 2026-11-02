@@ -13,6 +13,7 @@
   --primary-foreground: #fffcf7;
   --primary-tint: #e5e9e6;
   --primary-ring: #bec8c4;
+  --primary-wash: #eeefec;
   --secondary: #eee3d3;
   --muted: #eee3d3;
   --muted-foreground: #6b5848;
@@ -63,6 +64,17 @@
   --text-display: 800 52px/60px var(--font-sans);
   --text-month: 700 24px/32px var(--font-sans);
   --text-term: 700 24px/32px var(--font-sans);
+  --text-name: 600 16px/22px var(--font-sans);
+  --text-caption: 400 12px/16px var(--font-sans);
+  --text-caption-strong: 600 12px/16px var(--font-sans);
+  --text-count: 600 11px/16px var(--font-sans);
+  --text-small: 400 13px/18px var(--font-sans);
+  --text-small-strong: 600 13px/18px var(--font-sans);
+  --text-tab: 400 15px/20px var(--font-sans);
+  --text-tab-strong: 600 15px/20px var(--font-sans);
+  --text-phrase: 600 19px/24px var(--font-sans);
+  --text-story-title: 600 20px/26px var(--font-sans);
+  --text-meta: 400 11px/15px var(--font-sans);
 
   /* Layout */
   --screen-width: 390px;

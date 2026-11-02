@@ -5,28 +5,9 @@ import { Avatar, Button, ButtonLink, Checkbox, NavBar, Screen } from '../../comp
 import { useAppState, useDispatch } from '../../data/react.tsx';
 import { newId, nowIso } from '../../lib/ids.ts';
 import { usePersona } from '../../lib/session.ts';
-import {
-  formatDuration,
-  meaningsForStory,
-  personById,
-  storyById,
-  type AppState,
-  type Person,
-} from '../../shared/index.ts';
-import { isJustAdded, pronounsFor, statusText } from './people.ts';
+import { storyById, type Person } from '../../shared/index.ts';
+import { isJustAdded, pronounsFor, statusText, storyDetail } from './people.ts';
 import './family.css';
-
-const TRAIL = [{ label: 'Family', to: paths.family() }];
-
-function meaningSummary(state: AppState, storyId: string): string {
-  const meanings = meaningsForStory(state, storyId);
-  if (meanings.length === 0) return 'No meanings yet';
-  if (meanings.length === 1) {
-    const author = personById(state, meanings[0]!.authorId)?.name ?? 'Someone';
-    return `${author} added a meaning`;
-  }
-  return `${meanings.length} meanings`;
-}
 
 function cardLine(person: Person, selected: boolean): string {
   const fresh = isJustAdded(person);
@@ -52,10 +33,14 @@ export function SendStoryScreen() {
   const toId = useId();
   const askId = useId();
 
+  const wanted = search.get('to');
+  const trail = [{ label: 'Family', to: paths.family() }];
+  if (wanted) trail.push({ label: 'Select a story', to: paths.selectStory(wanted) });
+
   const story = storyById(state, storyId);
   if (!story) {
     return (
-      <Screen nav={<NavBar trail={TRAIL} current="Send story" />} tab="family">
+      <Screen nav={<NavBar trail={trail} current="Send story" />} tab="family">
         <div className="stack gap-4 fam-missing">
           <p className="t-title">Story not found</p>
           <ButtonLink variant="outline" size="md" to={paths.family()}>
@@ -66,10 +51,12 @@ export function SendStoryScreen() {
     );
   }
 
-  const candidates = state.people
+  const everyone = state.people
     .filter((p) => p.relationship !== 'grandma' && p.id !== persona)
     .sort((a, b) => Date.parse(a.addedAt) - Date.parse(b.addedAt));
-  const wanted = search.get('to');
+  // The person was already picked on 06, so 07 lists only them.
+  const chosen = everyone.find((p) => p.id === wanted);
+  const candidates = chosen ? [chosen] : everyone;
   const newest = candidates[candidates.length - 1];
   const defaultId = candidates.find((p) => p.id === wanted)?.id ?? newest?.id ?? null;
   const selected = candidates.find((p) => p.id === picked) ?? candidates.find((p) => p.id === defaultId);
@@ -102,7 +89,7 @@ export function SendStoryScreen() {
 
   return (
     <Screen
-      nav={<NavBar trail={TRAIL} current="Send story" />}
+      nav={<NavBar trail={trail} current="Send story" />}
       tab="family"
       bodyClassName="send-body"
       footer={
@@ -125,7 +112,7 @@ export function SendStoryScreen() {
         <div className="send-story">
           <p className="send-story__title">{story.title}</p>
           <p className="t-body t-muted">
-            {story.place} · {formatDuration(story.durationSec)} · {meaningSummary(state, story.id)}
+            {storyDetail(state, story)}
           </p>
         </div>
       </section>

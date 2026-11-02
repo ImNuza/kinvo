@@ -4,16 +4,10 @@
 .k-screen__body.fam-body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.fam-footer {
-  margin-bottom: calc(var(--space-1) * -1);
 }
 
 .fam-banners {
+  margin-bottom: var(--space-3);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -33,43 +27,177 @@
   min-width: 0;
 }
 
-.fam-card {
-  position: relative;
-  margin-bottom: var(--space-1);
-  flex: 1;
-  min-height: 380px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--card);
-}
-.fam-hill {
-  position: absolute;
-  inset: auto 0 0;
-  width: 100%;
-  height: auto;
-  pointer-events: none;
-}
-
-.fam-member {
-  position: absolute;
+/* Search */
+.fam-search {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-1);
-  width: 116px;
-  padding: 0;
+  gap: 10px;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4) 0 17px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--card);
+  color: var(--muted-foreground);
+}
+.fam-search:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.fam-search__icon {
+  flex: none;
+}
+.fam-search__input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-3) 0;
   border: 0;
   background: none;
+  color: var(--foreground);
+  font: var(--text-description);
+  outline: none;
+}
+.fam-search__input::placeholder {
+  color: var(--muted-foreground);
+}
+.fam-search__input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+/* Member list */
+.fam-section {
+  padding: var(--space-4) 0 var(--space-2);
+  color: var(--muted-foreground);
+  font: var(--text-caption);
+}
+.fam-rows {
+  border-top: 1px solid var(--border);
+}
+.fam-rows > li {
+  border-bottom: 1px solid var(--border);
+}
+.fam-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 73px;
+  padding: var(--space-4) 0;
+}
+.fam-row--link:hover .fam-row__name {
+  text-decoration: underline;
+}
+.fam-row__copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.fam-row__name {
+  font: var(--text-name);
+}
+.fam-row__chev {
+  flex: none;
+  color: var(--muted-foreground);
+}
+.fam-empty {
+  padding-top: var(--space-4);
+}
+
+/* Add family member */
+.fam-add-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: var(--space-6);
+}
+.fam-add {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 71px;
+  padding: var(--space-4) 18px;
+  border: 1.5px dashed var(--primary);
+  border-radius: var(--space-3);
+  background: none;
+  color: var(--primary);
+  font: var(--text-name);
+  text-align: left;
+}
+.fam-add:hover {
+  background: var(--primary-tint);
+}
+.fam-add__plus {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1.5px dashed var(--primary);
+  border-radius: var(--radius-full);
+}
+.fam-add__hint {
+  padding-top: var(--space-2);
+  color: var(--primary);
+  font: var(--text-caption);
   text-align: center;
-  /* The top value is the centre of the avatar. */
-  transform: translate(-50%, -28px);
 }
-.fam-member > .k-avatar {
-  margin-bottom: 1px;
+
+/* 06c Select a story */
+.k-screen__body.pick-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
-.fam-member--button {
-  border-radius: var(--radius-xl);
+.pick-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.pick-story {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 100px;
+  padding: var(--space-4) 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  text-align: left;
+}
+.pick-story:hover {
+  border-color: var(--input);
+}
+.pick-story--on {
+  border-color: var(--primary);
+  background: var(--primary-wash);
+}
+.pick-story__radio {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--input);
+  border-radius: var(--radius-full);
+  background: var(--card);
+}
+.pick-story--on .pick-story__radio {
+  border-color: var(--primary);
+  background: radial-gradient(circle, var(--card) 0 3.5px, var(--primary) 4px);
+}
+.pick-story__copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.pick-story__title {
+  font: var(--text-title);
 }
 
 /* 06a Add family member */

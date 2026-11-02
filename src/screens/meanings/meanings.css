@@ -28,6 +28,11 @@
   flex-direction: column;
   gap: 6px;
 }
+/* Figma 09: 16 px between the phrase card and the reply control. */
+.add-meaning__reply > .k-btn,
+.add-meaning__reply > .add-meaning__recorded {
+  margin-top: 10px;
+}
 .add-meaning__recorded {
   display: flex;
   align-items: center;
@@ -52,94 +57,278 @@
 }
 
 /* 09a and 09b */
-.meanings {
+.k-screen__body.meanings-body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 5px;
+  padding-top: 0;
 }
 .meanings__head {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
+  gap: 2px;
 }
-.meanings__term {
-  font: var(--text-term);
+.meanings__title {
+  font: var(--text-story-title);
 }
-.meanings__term:focus {
+.meanings__title:focus {
   outline: none;
 }
-.meanings__term:focus-visible {
+.meanings__title:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
-.meanings__cards {
+.meanings__status {
+  color: var(--muted-foreground);
+  font: var(--text-small-strong);
+}
+.meanings__status--differ {
+  color: var(--warning-text);
+}
+.meanings__status--agreed {
+  color: var(--success-text);
+}
+
+/* Phrase card with the meanings */
+.meanings__card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-1);
+  padding: 11px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+}
+.meanings__eyebrow {
+  color: var(--muted-foreground);
+  font: var(--text-caption);
+}
+.meanings__phrase-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.meanings__phrase {
+  font: var(--text-phrase);
+}
+.meanings__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.meaning-quote {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 10px 7px 14px;
+  border-left: 3px solid var(--warning-border);
+  border-radius: var(--radius-md);
+  background: var(--clay-tint);
+}
+.meaning-quote--agreed {
+  border-left-color: var(--success-text);
+  background: var(--success-tint);
+}
+.meaning-quote--faded {
+  opacity: 0.6;
+}
+.meaning-quote__copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.meaning-quote__label {
+  color: var(--warning-text);
+  font: var(--text-caption-strong);
+}
+.meaning-quote--agreed .meaning-quote__label {
+  color: var(--success-text);
+}
+.meaning-quote__text {
+  font: var(--text-small);
+}
+.meaning-quote__badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  height: 24px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--warning-border);
+  border-radius: var(--radius-full);
+  color: var(--warning-text);
+  font: var(--text-caption-strong);
 }
 .meanings__add {
   align-self: flex-start;
 }
-.meanings__thread {
+
+/* Open and Resolved tabs */
+.meanings__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+.meanings__tab {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  margin-bottom: -1px;
+  padding: 0 0 var(--space-1);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted-foreground);
+  font: var(--text-tab);
+}
+.meanings__tab--on {
+  border-bottom-color: var(--foreground);
+  color: var(--foreground);
+  font: var(--text-tab-strong);
+}
+.meanings__count {
+  min-width: 19px;
+  height: 18px;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font: var(--text-count);
+}
+.meanings__tab--on .meanings__count {
+  background: var(--foreground);
+  color: var(--card);
+}
+.meanings__panel > .t-body {
+  padding: var(--space-2) 0;
+}
+
+/* Thread card */
+.thread {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+}
+.thread__head {
+  padding: 6px var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--secondary);
+}
+.thread__head strong {
+  font-weight: 600;
+}
+.thread__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  padding: var(--space-2) 14px;
 }
 .meanings__replies {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-}
-.meanings__agreement {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-}
-.meanings .meanings__change {
-  color: var(--muted-foreground);
-}
-
-/* Composer in the Screen footer slot */
-.composer {
-  position: relative;
-  display: flex;
-  align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
 }
-.composer__input {
+.thread__reply {
+  display: flex;
+  gap: 10px;
+}
+.thread__input {
   flex: 1;
   min-width: 0;
-  min-height: var(--tap-min);
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--input);
+  min-height: 34px;
+  padding: var(--space-1) var(--space-4);
+  border: 1px solid var(--border);
   border-radius: var(--radius-full);
   background: var(--card);
   font: var(--text-description);
 }
-.composer__input::placeholder {
+.thread__input::placeholder {
   color: var(--muted-foreground);
 }
-.composer__send {
+.thread__agree {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-full);
+  background: var(--success-tint);
+  color: var(--success-text);
+  font: var(--text-subtitle);
+}
+.thread__agree:hover {
+  background: var(--card);
+}
+
+/* Resolved, saved for review */
+.meanings__past {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.meanings__section {
+  color: var(--muted-foreground);
+  font: var(--text-small);
+}
+.past-thread {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 49px;
+  padding: var(--space-2) 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--space-3);
+  background: var(--success-tint);
+}
+.past-thread__tick {
   display: grid;
   flex: none;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 0;
+  width: 24px;
+  height: 24px;
   border-radius: var(--radius-full);
-  background: var(--primary);
+  background: var(--success);
   color: var(--primary-foreground);
-  box-shadow: var(--shadow-button);
 }
-.composer__send:hover {
-  opacity: 0.92;
+.past-thread__copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
 }
-.composer__error {
-  position: absolute;
-  bottom: calc(100% + var(--space-1));
-  left: var(--space-4);
+.past-thread__title {
+  font: var(--text-subtitle);
+  line-height: 18px;
+}
+.past-thread__detail {
+  color: var(--muted-foreground);
+  font: var(--text-meta);
+}
+.past-thread__chev {
+  flex: none;
+  color: var(--muted-foreground);
+}
+
+/* Lesson banner */
+.lesson-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 33px;
+  padding: var(--space-2) 17px;
+  border: 1px solid var(--success);
+  border-radius: var(--space-3);
+  background: var(--success-tint);
+  color: var(--success-text);
+  font: var(--text-caption-strong);
+}
+.lesson-banner--link:hover {
+  text-decoration: underline;
 }

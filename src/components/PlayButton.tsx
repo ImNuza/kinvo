@@ -5,11 +5,12 @@ export type PlayButtonProps = {
   onClick: () => void;
   /** Accessible name, e.g. "Play Ah Ma's voice". Becomes "Pause ..." while playing. */
   label: string;
-  tone?: 'default' | 'primary';
+  /** "filled" is the 34px solid teal circle on 09a. */
+  tone?: 'default' | 'primary' | 'filled';
   disabled?: boolean;
 };
 
-/** 36px outlined circle with play or pause (01, 05, 09, 13). */
+/** 36px outlined circle with play or pause (01, 05, 09, 13), or a filled one (09a). */
 export function PlayButton({ playing, onClick, label, tone = 'default', disabled }: PlayButtonProps) {
   return (
     <button

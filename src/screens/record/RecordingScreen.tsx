@@ -205,8 +205,9 @@ export function RecordingScreen() {
       </Screen>
       <Alert
         open={blocker.state === 'blocked'}
+        icon="warn"
         title="Leave this recording?"
-        message={`You'll lose ${formatDuration(elapsedSec)} of Ah Ma's story. Save it as a draft to finish it later.`}
+        message={`You'll lose ${formatDuration(elapsedSec)} of Ah Ma's story. Save it as a draft and finish it later.`}
         actions={[
           { label: 'Save as draft', tone: 'bold', onClick: () => void onSaveAsDraft() },
           { label: 'Keep recording', onClick: onKeepRecording },

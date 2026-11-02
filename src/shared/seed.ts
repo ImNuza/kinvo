@@ -27,8 +27,8 @@ export const SCENARIO = {
   context: "Ah Ma's childhood at Kampong Lorong Buangkok",
   mumMeaning: 'It just means the area under a swing. Ah Ma used to play there as a kid.',
   auntieLinMeaning:
-    "It wasn't just any swing. The kampong carpenter built it, and everyone met there in the evenings. It was the heart of the kampong.",
-  auntieLinReply: 'I lived right next to the kampong, so I sat at that swing every evening too.',
+    "It wasn't just any swing. The carpenter in the kampong built it, and it was where everyone gathered in the evenings. Ah Ma calling it 'the swing' is like calling it the heart of the kampong.",
+  auntieLinReply: 'I lived right next to the kampong. I sat at that swing every evening too.',
   mumReply: 'You lived closer than I did. Your version is the fuller one.',
   suggestedReply: {
     phrase: 'Hit ê chhiu-chhian taⁿ-á iáu tī--bô?',
@@ -42,7 +42,24 @@ export const SCENARIO = {
   },
 } as const;
 
-export function createSeed(): AppState {
+/** Older saved stories, listed on 06c Select a story. A story with no audio (durationSec 0) is a photo. */
+const PAST_STORIES = [
+  { id: 'story-saturday-lunch', title: 'Saturday lunch with Ah Ma', place: 'Toa Payoh', occasion: 'Saturday lunch', date: '2026-09-12', durationSec: 0 },
+  { id: 'story-movie-date', title: 'Movie date with Ah Ma', place: 'Vivocity', occasion: 'Movie date', date: '2026-09-11', durationSec: 0 },
+  { id: 'story-voice-note', title: 'Voice note', place: '', occasion: '', date: '2026-09-09', durationSec: 7 },
+] as const;
+
+const HOUR_MS = 60 * 60 * 1000;
+
+/**
+ * Mum went offline two hours before the seed was made, so 06 shows "Last online 2h ago".
+ * Rounded down to the hour, so two seeds made in the same hour are equal.
+ */
+function mumLastSeen(now: number): string {
+  return new Date(Math.floor(now / HOUR_MS) * HOUR_MS - 2 * HOUR_MS).toISOString();
+}
+
+export function createSeed(now: number = Date.now()): AppState {
   return {
     schema: 1,
     people: [
@@ -69,7 +86,8 @@ export function createSeed(): AppState {
         name: 'Mum',
         initials: 'ML',
         relationship: 'mum',
-        online: true,
+        online: false,
+        lastSeenAt: mumLastSeen(now),
         addedAt: '2026-08-01T10:05:00+08:00',
         addedBy: PERSON.meixin,
       },
@@ -92,6 +110,18 @@ export function createSeed(): AppState {
         agreedBy: null,
         agreedAt: null,
       },
+      ...PAST_STORIES.map((s) => ({
+        ...s,
+        note: '',
+        status: 'saved' as const,
+        createdBy: PERSON.meixin,
+        createdAt: `${s.date}T20:00:00+08:00`,
+        updatedAt: `${s.date}T20:00:00+08:00`,
+        term: null,
+        agreedMeaningId: null,
+        agreedBy: null,
+        agreedAt: null,
+      })),
     ],
     meanings: [
       {
