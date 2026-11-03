@@ -27,3 +27,20 @@
 .demo-panel {
   padding-bottom: var(--space-4);
 }
+
+/* Reset demo: top right of the page, outside the phone frame. Wide screens only. */
+.demo-reset {
+  display: none;
+}
+@media (min-width: 600px) {
+  .demo-reset {
+    position: fixed;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: 200;
+    display: block;
+  }
+  .demo-reset .k-btn {
+    background: var(--card);
+  }
+}

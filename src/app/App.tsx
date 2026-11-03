@@ -9,6 +9,7 @@ import { recordRoutes } from '../screens/record/routes.tsx';
 import { DemoPanel } from './DemoPanel.tsx';
 import { Intro } from './Intro.tsx';
 import { paths } from './paths.ts';
+import { ResetButton } from './ResetButton.tsx';
 import { StudyRedirect } from './StudyRedirect.tsx';
 
 // Tab title per route, so screen readers and browser tabs name the screen.
@@ -43,6 +44,7 @@ function AppLayout() {
     <div id="app-frame" className="app-frame">
       <Outlet />
       <DemoPanel />
+      <ResetButton />
       <Intro />
     </div>
   );
